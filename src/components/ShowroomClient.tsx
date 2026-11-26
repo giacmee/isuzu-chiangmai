@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Check, Calculator, FileDown, GitCompare, Shield, Sparkles, Car } from "lucide-react";
 import type { CarModel } from "@/types/database";
-import { formatBaht } from "@/data/mock-data";
+import { formatBaht } from "@/lib/format";
 import type { MediaManifest } from "@/lib/media-store";
 import { Car360Viewer } from "@/components/Car360Viewer";
 
@@ -215,7 +215,7 @@ export function ShowroomClient({
                   </a>
                 ) : (
                   <Link
-                    href="/admin/media"
+                    href="/media-manager"
                     className="mt-2.5 flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/10 py-2.5 text-xs text-neutral-400 hover:bg-white/5 hover:text-white"
                   >
                     <FileDown className="h-4 w-4 text-[#d70015]" />

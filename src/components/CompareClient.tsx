@@ -1,28 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Calculator } from "lucide-react";
-import { CAR_MODELS, formatBaht } from "@/data/mock-data";
+import type { CarModel } from "@/types/database";
+import { formatBaht } from "@/lib/format";
 
-const ALL_TRIMS = CAR_MODELS.flatMap((model) =>
-  model.trims.map((trim) => ({
-    ...trim,
-    modelName: model.name,
-    modelSlug: model.slug,
-  }))
-);
+export function CompareClient({ models }: { models: CarModel[] }) {
+  const allTrims = useMemo(
+    () =>
+      models.flatMap((model) =>
+        model.trims.map((trim) => ({
+          ...trim,
+          modelName: model.name,
+          modelSlug: model.slug,
+        }))
+      ),
+    [models]
+  );
 
-export function CompareClient() {
   const [selectedIds, setSelectedIds] = useState<string[]>([
-    ALL_TRIMS[0]?.id ?? "",
-    ALL_TRIMS[2]?.id ?? "",
-    ALL_TRIMS[5]?.id ?? "",
+    allTrims[0]?.id ?? "",
+    allTrims[2]?.id ?? allTrims[1]?.id ?? allTrims[0]?.id ?? "",
+    allTrims[5]?.id ?? allTrims[2]?.id ?? allTrims[0]?.id ?? "",
   ]);
 
   const selectedTrims = selectedIds
-    .map((id) => ALL_TRIMS.find((t) => t.id === id))
-    .filter((t): t is (typeof ALL_TRIMS)[number] => Boolean(t));
+    .map((id) => allTrims.find((t) => t.id === id))
+    .filter((t): t is (typeof allTrims)[number] => Boolean(t));
 
   function updateSlot(index: number, trimId: string) {
     setSelectedIds((prev) => {
@@ -30,6 +35,16 @@ export function CompareClient() {
       next[index] = trimId;
       return next;
     });
+  }
+
+  if (allTrims.length === 0) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-16 text-center">
+        <p className="font-display text-xl font-bold text-[#111317]">
+          ยังไม่มีข้อมูลรุ่นรถสำหรับเปรียบเทียบ
+        </p>
+      </div>
+    );
   }
 
   return (
@@ -56,7 +71,7 @@ export function CompareClient() {
               onChange={(e) => updateSlot(slot, e.target.value)}
               className="mt-1.5 w-full rounded-lg border border-neutral-300 bg-white px-3 py-2.5 text-sm font-medium focus:border-[#d70015] focus:outline-none"
             >
-              {ALL_TRIMS.map((trim) => (
+              {allTrims.map((trim) => (
                 <option key={trim.id} value={trim.id}>
                   {trim.name}
                 </option>

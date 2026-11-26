@@ -19,7 +19,7 @@ import {
   Video,
 } from "lucide-react";
 import type { MediaManifest } from "@/lib/media-store";
-import { ARTICLES, CAR_MODELS, PROMOTIONS } from "@/data/mock-data";
+import type { Article, CarModel, Promotion } from "@/types/database";
 
 type TabId = "brand" | "cars" | "promotions" | "articles";
 
@@ -236,8 +236,16 @@ function MediaSlotCard({
 
 export function MediaManagerClient({
   initialManifest,
+  models,
+  promotions,
+  articles,
+  userEmail,
 }: {
   initialManifest: MediaManifest;
+  models: CarModel[];
+  promotions: Promotion[];
+  articles: Article[];
+  userEmail?: string;
 }) {
   const [manifest, setManifest] = useState<MediaManifest>(initialManifest);
   const [activeTab, setActiveTab] = useState<TabId>("cars");
@@ -406,14 +414,14 @@ export function MediaManagerClient({
     },
   ];
 
-  const promoSlots: SlotItem[] = PROMOTIONS.map((promo) => ({
+  const promoSlots: SlotItem[] = promotions.map((promo) => ({
     slotKey: `promo:${promo.id}`,
     label: promo.title,
     hint: `หมวดหมู่: ${promo.category} • แนะนำขนาด 1200×675 px (16:9)`,
     accept: "image/webp,image/png,image/jpeg",
   }));
 
-  const articleSlots: SlotItem[] = ARTICLES.map((art) => ({
+  const articleSlots: SlotItem[] = articles.map((art) => ({
     slotKey: `article:${art.id}`,
     label: art.title,
     hint: `หมวดหมู่: ${art.category} • แนะนำขนาด 1200×675 px (16:9)`,
@@ -444,10 +452,22 @@ export function MediaManagerClient({
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {userEmail && (
+            <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-xs font-semibold text-emerald-800">
+              ผู้ดูแลระบบ: {userEmail}
+            </div>
+          )}
           <div className="rounded-lg border border-neutral-200 bg-[#f4f5f7] px-4 py-2 text-xs font-semibold text-[#111317]">
             ไฟล์ที่อัปโหลดแล้ว:{" "}
             <span className="text-[#d70015]">{uploadedCount}</span> รายการ
           </div>
+          <Link
+            href="/admin"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-[#0d0f12] px-4 py-2 text-xs font-semibold text-white transition hover:bg-neutral-800"
+          >
+            Payload CMS (/admin)
+            <ExternalLink className="h-3.5 w-3.5" />
+          </Link>
           <Link
             href="/"
             className="inline-flex items-center gap-1.5 rounded-lg bg-[#d70015] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#a80010]"
@@ -598,7 +618,7 @@ export function MediaManagerClient({
 
         {activeTab === "cars" && (
           <div className="space-y-10">
-            {CAR_MODELS.map((model) => {
+            {models.map((model) => {
               const slots: SlotItem[] = [
                 {
                   slotKey: `model:${model.slug}`,

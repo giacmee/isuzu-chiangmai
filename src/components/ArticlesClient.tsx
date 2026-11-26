@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search, Calendar, Clock, ArrowRight, Newspaper } from "lucide-react";
 import type { Article } from "@/types/database";
-import { formatThaiDate } from "@/data/mock-data";
+import { formatThaiDate } from "@/lib/format";
 import type { MediaManifest } from "@/lib/media-store";
 
 const CATEGORIES = [

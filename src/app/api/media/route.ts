@@ -7,6 +7,7 @@ import {
   saveMediaFrames,
   saveYouTubeSlot,
 } from "@/lib/media-store";
+import { getCurrentAdminUser } from "@/lib/payload-auth";
 
 export async function GET() {
   const manifest = await getMediaManifest();
@@ -15,6 +16,14 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const user = await getCurrentAdminUser(request.headers);
+    if (!user) {
+      return NextResponse.json(
+        { error: "กรุณาเข้าสู่ระบบผู้ดูแลระบบ (/admin) ก่อนจัดการไฟล์สื่อ" },
+        { status: 401 }
+      );
+    }
+
     const contentType = request.headers.get("content-type") ?? "";
     if (contentType.includes("application/json")) {
       const body = (await request.json().catch(() => ({}))) as {
@@ -73,6 +82,14 @@ export async function POST(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
+    const user = await getCurrentAdminUser(request.headers);
+    if (!user) {
+      return NextResponse.json(
+        { error: "กรุณาเข้าสู่ระบบผู้ดูแลระบบ (/admin) ก่อนจัดการไฟล์สื่อ" },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     let slotKey = searchParams.get("slotKey") ?? "";
 

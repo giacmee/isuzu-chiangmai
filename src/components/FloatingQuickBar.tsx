@@ -135,8 +135,8 @@ const QUICK_ACTIONS = [
 export function FloatingQuickBar() {
   const pathname = usePathname();
 
-  // ซ่อนในหน้า Admin เพื่อไม่ให้บังการทำงาน
-  if (pathname?.startsWith("/admin")) {
+  // ซ่อนในหน้า Admin และ Media Manager เพื่อไม่ให้บังการทำงาน
+  if (pathname?.startsWith("/admin") || pathname?.startsWith("/media-manager")) {
     return null;
   }
 

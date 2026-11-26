@@ -1,8 +1,14 @@
 import Link from "next/link";
 import { MapPin, Phone, Clock, MessageCircle } from "lucide-react";
-import { BRANCHES } from "@/data/mock-data";
+import type { Branch } from "@/types/database";
 
-export function Footer({ logoUrl }: { logoUrl?: string }) {
+export function Footer({
+  logoUrl,
+  branches,
+}: {
+  logoUrl?: string;
+  branches: Branch[];
+}) {
   const resolvedLogo = logoUrl ?? "/images/logo-isuzu-sala.png";
 
   return (
@@ -49,7 +55,7 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
                 </Link>
               </div>
               <div className="mt-3 grid gap-4 sm:grid-cols-2">
-                {BRANCHES.slice(0, 2).map((branch) => (
+                {branches.slice(0, 2).map((branch) => (
                   <div key={branch.id} className="rounded-lg border border-white/10 bg-white/5 p-3.5 text-xs">
                     <p className="font-semibold text-white">{branch.name}</p>
                     <p className="mt-1.5 flex items-start gap-1.5 text-neutral-400">
@@ -72,12 +78,16 @@ export function Footer({ logoUrl }: { logoUrl?: string }) {
 
           <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-xs text-neutral-500 sm:flex-row">
             <p>© {new Date().getFullYear()} อีซูซุศาลาเชียงใหม่ (Next.js Prototype). All rights reserved.</p>
-            <div className="flex items-center gap-4">
-              <Link href="/admin/media" className="text-neutral-400 hover:text-white">
-                จัดการรูปภาพ &amp; โบรชัวร์ (Admin)
+            <div className="flex flex-wrap items-center gap-3">
+              <Link href="/admin" className="text-neutral-400 hover:text-white">
+                Payload CMS (Admin)
               </Link>
               <span>•</span>
-              <p>Built with Next.js + TypeScript + Tailwind CSS</p>
+              <Link href="/media-manager" className="text-neutral-400 hover:text-white">
+                จัดการรูปภาพ &amp; 360°
+              </Link>
+              <span>•</span>
+              <p>Built with Next.js + Payload CMS + Tailwind CSS</p>
             </div>
           </div>
         </div>

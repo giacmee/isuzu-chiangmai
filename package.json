@@ -2,17 +2,28 @@
   "name": "isuzu-chiangmai",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "payload": "payload",
+    "generate:types": "payload generate:types",
+    "generate:importmap": "payload generate:importmap",
+    "seed": "tsx --env-file=.env src/seed.ts"
   },
   "dependencies": {
+    "@payloadcms/db-sqlite": "^3.94.2",
+    "@payloadcms/next": "^3.94.2",
+    "@payloadcms/richtext-lexical": "^3.94.2",
+    "graphql": "^16.15.0",
     "lucide-react": "^1.80.0",
     "next": "16.4.6",
-    "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "payload": "^3.94.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "sharp": "^0.35.5"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
@@ -22,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.4.6",
     "tailwindcss": "4.3.3",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -3,16 +3,25 @@
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Calculator, Gauge } from "lucide-react";
-import { CAR_CATEGORIES, CAR_MODELS, formatBaht } from "@/data/mock-data";
+import { formatBaht } from "@/lib/format";
 import type { MediaManifest } from "@/lib/media-store";
+import type { CarCategory, CarModel } from "@/types/database";
 
-export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
+export function HomeLineup({
+  categories,
+  models,
+  media = {},
+}: {
+  categories: CarCategory[];
+  models: CarModel[];
+  media?: MediaManifest;
+}) {
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
   const filteredModels =
     selectedCategory === "all"
-      ? CAR_MODELS
-      : CAR_MODELS.filter((m) => m.category_slug === selectedCategory);
+      ? models
+      : models.filter((m) => m.category_slug === selectedCategory);
 
   return (
     <section id="models" className="bg-white py-16 sm:py-20">
@@ -37,9 +46,9 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                   : "bg-[#f4f5f7] text-neutral-700 hover:bg-neutral-200"
               }`}
             >
-              ทั้งหมด ({CAR_MODELS.length})
+              ทั้งหมด ({models.length})
             </button>
-            {CAR_CATEGORIES.map((cat) => (
+            {categories.map((cat) => (
               <button
                 key={cat.id}
                 type="button"

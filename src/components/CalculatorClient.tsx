@@ -3,31 +3,45 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Calculator, ArrowRight, CheckCircle2 } from "lucide-react";
-import { CAR_MODELS, formatBaht } from "@/data/mock-data";
+import type { CarModel } from "@/types/database";
+import { formatBaht } from "@/lib/format";
 
 const DOWN_PAYMENT_OPTIONS = [10, 15, 20, 25, 30];
 const TERM_OPTIONS = [48, 60, 72, 84];
 
 export function CalculatorClient({
+  models,
   initialModelSlug,
   initialTrimId,
 }: {
+  models: CarModel[];
   initialModelSlug?: string;
   initialTrimId?: string;
 }) {
+  const modelsWithTrims = models.filter((m) => m.trims.length > 0);
   const defaultModel =
-    CAR_MODELS.find((m) => m.slug === initialModelSlug) ?? CAR_MODELS[0];
+    modelsWithTrims.find((m) => m.slug === initialModelSlug) ?? modelsWithTrims[0];
   const defaultTrim =
-    defaultModel.trims.find((t) => t.id === initialTrimId) ?? defaultModel.trims[0];
+    defaultModel?.trims.find((t) => t.id === initialTrimId) ?? defaultModel?.trims[0];
 
-  const [selectedModelId, setSelectedModelId] = useState(defaultModel.id);
-  const [selectedTrimId, setSelectedTrimId] = useState(defaultTrim.id);
+  const [selectedModelId, setSelectedModelId] = useState(defaultModel?.id ?? "");
+  const [selectedTrimId, setSelectedTrimId] = useState(defaultTrim?.id ?? "");
   const [downPercent, setDownPercent] = useState(15);
   const [interestRate, setInterestRate] = useState(2.39);
   const [months, setMonths] = useState(72);
 
+  if (!defaultModel || !defaultTrim) {
+    return (
+      <div className="mx-auto max-w-4xl px-4 py-16 text-center">
+        <p className="font-display text-xl font-bold text-[#111317]">
+          ยังไม่มีข้อมูลรุ่นรถในระบบ CMS
+        </p>
+      </div>
+    );
+  }
+
   const currentModel =
-    CAR_MODELS.find((m) => m.id === selectedModelId) ?? CAR_MODELS[0];
+    modelsWithTrims.find((m) => m.id === selectedModelId) ?? defaultModel;
   const currentTrim =
     currentModel.trims.find((t) => t.id === selectedTrimId) ?? currentModel.trims[0];
 
@@ -40,7 +54,7 @@ export function CalculatorClient({
 
   function handleModelChange(modelId: string) {
     setSelectedModelId(modelId);
-    const nextModel = CAR_MODELS.find((m) => m.id === modelId);
+    const nextModel = modelsWithTrims.find((m) => m.id === modelId);
     if (nextModel && nextModel.trims.length > 0) {
       setSelectedTrimId(nextModel.trims[0].id);
     }
@@ -72,7 +86,7 @@ export function CalculatorClient({
               onChange={(e) => handleModelChange(e.target.value)}
               className="mt-2 w-full rounded-lg border border-neutral-300 bg-white px-4 py-3 text-sm focus:border-[#d70015] focus:outline-none"
             >
-              {CAR_MODELS.map((m) => (
+              {modelsWithTrims.map((m) => (
                 <option key={m.id} value={m.id}>
                   {m.name}
                 </option>
