@@ -3,6 +3,7 @@ import { IBM_Plex_Sans_Thai, Prompt } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { FloatingQuickBar } from "@/components/FloatingQuickBar";
 import { getMediaManifest } from "@/lib/media-store";
 
 const ibmPlexThai = IBM_Plex_Sans_Thai({
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="flex min-h-full flex-col bg-white text-[#111317]">
         <Navbar logoUrl={siteLogoUrl} />
         <main className="flex-1">{children}</main>
+        <FloatingQuickBar />
         <Footer />
       </body>
     </html>

@@ -55,7 +55,10 @@ export function ShowroomClient({
                   </div>
 
                   {/* Vehicle Preview (แสดงรูปจริงตามสีที่เลือก หากอัปโหลดไว้ใน /admin/media) */}
-                  <div className="my-6 flex flex-col items-center justify-center text-center">
+                  <div
+                    key={selectedColor?.id ?? "default"}
+                    className="animate-spring-pop my-6 flex flex-col items-center justify-center text-center"
+                  >
                     {activeCarImage ? (
                       <div className="flex h-56 w-full items-center justify-center sm:h-64">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -63,12 +66,12 @@ export function ShowroomClient({
                           key={activeCarImage}
                           src={activeCarImage}
                           alt={`${model.name} - ${selectedColor?.color_name ?? ""}`}
-                          className="max-h-full max-w-full rounded-xl object-contain drop-shadow-2xl transition-opacity duration-300"
+                          className="max-h-full max-w-full rounded-xl object-contain drop-shadow-2xl"
                         />
                       </div>
                     ) : (
                       <div
-                        className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/20 shadow-2xl transition-colors duration-300"
+                        className="spring-transition flex h-24 w-24 items-center justify-center rounded-full border-4 border-white/20 shadow-2xl transition-all duration-300"
                         style={{ backgroundColor: selectedColor?.hex_code ?? "#333" }}
                       >
                         <Car className="h-10 w-10 text-white mix-blend-difference" />
@@ -96,10 +99,10 @@ export function ShowroomClient({
                           key={color.id}
                           type="button"
                           onClick={() => setSelectedColor(color)}
-                          className={`flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs transition ${
+                          className={`btn-spring flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs ${
                             active
-                              ? "border-[#d70015] bg-white/10 text-white"
-                              : "border-white/15 bg-transparent text-neutral-400 hover:border-white/40"
+                              ? "scale-105 border-[#d70015] bg-white/15 text-white shadow-[0_0_0_2px_rgba(215,0,21,0.3)]"
+                              : "border-white/15 bg-transparent text-neutral-400 hover:border-white/40 hover:text-white"
                           }`}
                         >
                           <span
@@ -136,7 +139,7 @@ export function ShowroomClient({
                         key={trim.id}
                         type="button"
                         onClick={() => setSelectedTrim(trim)}
-                        className={`flex w-full items-center justify-between rounded-lg border px-4 py-3 text-left transition ${
+                        className={`spring-transition flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-all duration-300 hover:translate-x-1 active:scale-[0.98] ${
                           active
                             ? "border-[#d70015] bg-[#d70015]/15 text-white"
                             : "border-white/10 bg-white/5 text-neutral-300 hover:border-white/30"

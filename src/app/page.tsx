@@ -59,21 +59,21 @@ export default async function HomePage() {
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href="/#models"
-                className="inline-flex items-center gap-2 rounded-lg bg-[#d70015] px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-[#a80010]"
+                className="btn-spring group inline-flex items-center gap-2 rounded-lg bg-[#d70015] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(215,0,21,0.38)] hover:bg-[#b80012]"
               >
                 สำรวจรุ่นรถทั้งหมด
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="spring-transition h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
               </Link>
               <Link
                 href="/calculator"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="btn-spring inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white hover:border-white/40 hover:bg-white/10"
               >
                 <Calculator className="h-4 w-4 text-[#d70015]" />
                 คำนวณค่างวด
               </Link>
               <Link
                 href="/compare"
-                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-white/10"
+                className="btn-spring inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white hover:border-white/40 hover:bg-white/10"
               >
                 <GitCompare className="h-4 w-4 text-neutral-300" />
                 เปรียบเทียบรุ่นรถ
@@ -85,43 +85,43 @@ export default async function HomePage() {
           <div className="mt-14 grid gap-4 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4">
             <Link
               href="/models/d-max-hi-lander"
-              className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-[#d70015]"
+              className="card-spring group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[#d70015] hover:bg-white/8"
             >
               <div>
                 <p className="text-xs text-neutral-400">Interactive Showroom</p>
                 <p className="font-display text-sm font-semibold text-white">ทดลองเลือกสีรถและรุ่นย่อย</p>
               </div>
-              <ArrowRight className="h-4 w-4 text-[#d70015]" />
+              <ArrowRight className="spring-transition h-4 w-4 text-[#d70015] transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
             <Link
               href="/calculator"
-              className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-[#d70015]"
+              className="card-spring group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[#d70015] hover:bg-white/8"
             >
               <div>
                 <p className="text-xs text-neutral-400">Finance Tool</p>
                 <p className="font-display text-sm font-semibold text-white">คำนวณเงินดาวน์ &amp; ผ่อนรายเดือน</p>
               </div>
-              <Calculator className="h-4 w-4 text-[#d70015]" />
+              <Calculator className="spring-transition h-4 w-4 text-[#d70015] transition-transform duration-300 group-hover:scale-115" />
             </Link>
             <Link
               href="/service/booking"
-              className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-[#d70015]"
+              className="card-spring group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[#d70015] hover:bg-white/8"
             >
               <div>
                 <p className="text-xs text-neutral-400">After-Sales Service</p>
                 <p className="font-display text-sm font-semibold text-white">นัดหมายเช็คระยะ / ซ่อมสีตัวถัง</p>
               </div>
-              <CalendarCheck className="h-4 w-4 text-[#d70015]" />
+              <CalendarCheck className="spring-transition h-4 w-4 text-[#d70015] transition-transform duration-300 group-hover:scale-115" />
             </Link>
             <Link
               href="/sales"
-              className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-4 transition hover:border-[#d70015]"
+              className="card-spring group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[#d70015] hover:bg-white/8"
             >
               <div>
                 <p className="text-xs text-neutral-400">Sales Consultant</p>
                 <p className="font-display text-sm font-semibold text-white">ค้นหาที่ปรึกษาการขายประจำสาขา</p>
               </div>
-              <Users className="h-4 w-4 text-[#d70015]" />
+              <Users className="spring-transition h-4 w-4 text-[#d70015] transition-transform duration-300 group-hover:scale-115" />
             </Link>
           </div>
         </div>
@@ -157,7 +157,7 @@ export default async function HomePage() {
               return (
               <div
                 key={promo.id}
-                className="flex flex-col justify-between overflow-hidden rounded-xl border border-neutral-200 bg-white shadow-sm transition hover:shadow-md"
+                className="card-spring group flex flex-col justify-between overflow-hidden rounded-2xl border border-neutral-200 bg-white hover:border-[#d70015]/40 hover:shadow-[0_16px_32px_rgba(17,19,23,0.1)]"
               >
                 <div>
                   {promoImg && (

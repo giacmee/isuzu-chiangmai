@@ -31,9 +31,9 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
             <button
               type="button"
               onClick={() => setSelectedCategory("all")}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`btn-spring rounded-full px-4 py-2 text-sm font-medium ${
                 selectedCategory === "all"
-                  ? "bg-[#111317] text-white"
+                  ? "bg-[#111317] text-white shadow-md"
                   : "bg-[#f4f5f7] text-neutral-700 hover:bg-neutral-200"
               }`}
             >
@@ -44,9 +44,9 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                 key={cat.id}
                 type="button"
                 onClick={() => setSelectedCategory(cat.slug)}
-                className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+                className={`btn-spring rounded-full px-4 py-2 text-sm font-medium ${
                   selectedCategory === cat.slug
-                    ? "bg-[#d70015] text-white"
+                    ? "bg-[#d70015] text-white shadow-[0_6px_16px_rgba(215,0,21,0.3)]"
                     : "bg-[#f4f5f7] text-neutral-700 hover:bg-neutral-200"
                 }`}
               >
@@ -56,15 +56,19 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {filteredModels.map((model) => {
+        <div
+          key={selectedCategory}
+          className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        >
+          {filteredModels.map((model, idx) => {
             const modelImg =
               media[`model:${model.slug}`]?.url ??
               model.colors.map((c) => media[`color:${c.id}`]?.url).find(Boolean);
             return (
             <div
               key={model.id}
-              className="group flex flex-col overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-xl"
+              style={{ animationDelay: `${Math.min(idx * 45, 270)}ms` }}
+              className="animate-spring-pop card-spring group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white hover:border-[#d70015]/40 hover:shadow-[0_18px_36px_rgba(17,19,23,0.12)]"
             >
               {/* Showroom Card Header (แสดงรูปจริงเมื่ออัปโหลดผ่าน /admin/media) */}
               <div className="relative flex h-44 flex-col justify-between overflow-hidden bg-gradient-to-br from-[#14171c] via-[#1f242c] to-[#0d0f12] p-5 text-white">
@@ -74,7 +78,7 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                     <img
                       src={modelImg}
                       alt={model.name}
-                      className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                      className="spring-transition absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-108"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12]/90 via-[#0d0f12]/25 to-[#0d0f12]/40" />
                   </>
@@ -83,12 +87,12 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                   <span className="rounded bg-[#d70015] px-2.5 py-0.5 text-[11px] font-semibold">
                     {model.category_slug.toUpperCase()}
                   </span>
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
                     {model.colors.slice(0, 4).map((c) => (
                       <span
                         key={c.id}
                         title={c.color_name}
-                        className="h-3.5 w-3.5 rounded-full border border-white/40"
+                        className="spring-transition h-3.5 w-3.5 rounded-full border border-white/40 transition-transform duration-300 hover:scale-125"
                         style={{ backgroundColor: c.hex_code }}
                       />
                     ))}
@@ -123,15 +127,15 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                 <div className="mt-5 flex items-center gap-2 pt-1">
                   <Link
                     href={`/models/${model.slug}`}
-                    className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#111317] px-3 py-2.5 text-xs font-semibold text-white transition group-hover:bg-[#d70015]"
+                    className="btn-spring flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#111317] px-3 py-2.5 text-xs font-semibold text-white group-hover:bg-[#d70015]"
                   >
                     ดูรายละเอียด &amp; สีรถ
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <ArrowRight className="spring-transition h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
                   </Link>
                   <Link
                     href={`/calculator?model=${model.slug}`}
                     title="คำนวณค่างวดรุ่นนี้"
-                    className="flex items-center justify-center rounded-lg border border-neutral-200 p-2.5 text-neutral-700 hover:border-[#d70015] hover:text-[#d70015]"
+                    className="btn-spring flex items-center justify-center rounded-lg border border-neutral-200 p-2.5 text-neutral-700 hover:border-[#d70015] hover:text-[#d70015]"
                   >
                     <Calculator className="h-4 w-4" />
                   </Link>
