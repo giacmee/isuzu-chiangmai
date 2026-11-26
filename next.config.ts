@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
   turbopack: {
     rules: {
       "*.css": {
@@ -11,6 +8,17 @@ const nextConfig: NextConfig = {
         as: "*.css",
       },
     },
+  },
+  // Step 5: 301 Redirects สำหรับย้าย URL เดิมจากเว็บ PHP (isuzuchiangmai.com) มาที่ URL ใหม่
+  async redirects() {
+    return [
+      // ตัวอย่าง (นำ URL จริงจาก sitemap.xml เดิมมาเติมที่นี่ก่อนขึ้น Production):
+      // {
+      //   source: "/old-promotion-page",
+      //   destination: "/promotions",
+      //   permanent: true,
+      // },
+    ];
   },
 };
 
