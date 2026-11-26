@@ -15,6 +15,8 @@ import {
   Newspaper,
   LayoutTemplate,
   Loader2,
+  Rotate3d,
+  Video,
 } from "lucide-react";
 import type { MediaManifest } from "@/lib/media-store";
 import { ARTICLES, CAR_MODELS, PROMOTIONS } from "@/data/mock-data";
@@ -27,6 +29,7 @@ interface SlotItem {
   hint: string;
   accept: string;
   isPdf?: boolean;
+  isSpin360?: boolean;
   swatchHex?: string;
   previewLink?: string;
 }
@@ -42,19 +45,26 @@ function MediaSlotCard({
   entry,
   busy,
   onUpload,
+  onUploadFrames,
   onDelete,
 }: {
   item: SlotItem;
   entry?: MediaManifest[string];
   busy: boolean;
   onUpload: (slotKey: string, file: File) => void;
+  onUploadFrames?: (slotKey: string, files: File[]) => void;
   onDelete: (slotKey: string) => void;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
   const handleFiles = (files: FileList | null) => {
-    const file = files?.[0];
+    if (!files || files.length === 0) return;
+    if (item.isSpin360 && onUploadFrames) {
+      onUploadFrames(item.slotKey, Array.from(files));
+      return;
+    }
+    const file = files[0];
     if (file) {
       onUpload(item.slotKey, file);
     }
@@ -92,12 +102,19 @@ function MediaSlotCard({
             </h3>
           </div>
           {entry ? (
-            <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
-              มีไฟล์แล้ว
-            </span>
+            item.isSpin360 && entry.frames?.length ? (
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                <Rotate3d className="h-3 w-3" />
+                360° • {entry.frames.length} เฟรม
+              </span>
+            ) : (
+              <span className="shrink-0 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                มีไฟล์แล้ว
+              </span>
+            )
           ) : (
             <span className="shrink-0 rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] font-medium text-neutral-500">
-              ยังไม่มีรูป
+              {item.isSpin360 ? "ยังไม่มี 360°" : "ยังไม่มีรูป"}
             </span>
           )}
         </div>
@@ -127,6 +144,15 @@ function MediaSlotCard({
                   เปิดดูไฟล์ PDF
                 </a>
               </div>
+            ) : entry.mimeType.startsWith("video/") ? (
+              <video
+                src={entry.url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="h-full w-full object-cover"
+              />
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -139,10 +165,16 @@ function MediaSlotCard({
             <div className="flex flex-col items-center gap-1.5 px-4 text-center text-neutral-400">
               {item.isPdf ? (
                 <FileText className="h-8 w-8" />
+              ) : item.isSpin360 ? (
+                <Rotate3d className="h-8 w-8 text-[#d70015]" />
               ) : (
                 <ImageIcon className="h-8 w-8" />
               )}
-              <span className="text-xs">ลากไฟล์มาวางที่นี่ หรือกดปุ่มเพิ่มไฟล์</span>
+              <span className="text-xs">
+                {item.isSpin360
+                  ? "ลากหลายรูปพร้อมกันมาวาง หรือกดเลือกไฟล์ 360°"
+                  : "ลากไฟล์มาวางที่นี่ หรือกดปุ่มเพิ่มไฟล์"}
+              </span>
             </div>
           )}
         </div>
@@ -160,6 +192,7 @@ function MediaSlotCard({
           ref={inputRef}
           type="file"
           accept={item.accept}
+          multiple={Boolean(item.isSpin360)}
           className="hidden"
           onChange={(e) => {
             handleFiles(e.target.files);
@@ -173,7 +206,15 @@ function MediaSlotCard({
           className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#0d0f12] px-3 py-2 text-xs font-semibold text-white transition hover:bg-[#d70015] disabled:opacity-50"
         >
           <Upload className="h-3.5 w-3.5" />
-          {entry ? "เปลี่ยนไฟล์" : item.isPdf ? "อัปโหลด PDF" : "เพิ่มรูปภาพ"}
+          {item.isSpin360
+            ? entry
+              ? "เปลี่ยนชุดภาพ 360°"
+              : "อัปโหลดชุดภาพ 360° (หลายรูป)"
+            : entry
+              ? "เปลี่ยนไฟล์"
+              : item.isPdf
+                ? "อัปโหลด PDF"
+                : "เพิ่มรูปภาพ"}
         </button>
 
         {entry && (
@@ -201,6 +242,9 @@ export function MediaManagerClient({
   const [manifest, setManifest] = useState<MediaManifest>(initialManifest);
   const [activeTab, setActiveTab] = useState<TabId>("cars");
   const [busySlot, setBusySlot] = useState<string | null>(null);
+  const [youtubeInput, setYoutubeInput] = useState<string>(
+    initialManifest["hero_youtube"]?.originalName ?? ""
+  );
   const [toast, setToast] = useState<{
     type: "success" | "error";
     text: string;
@@ -246,6 +290,45 @@ export function MediaManagerClient({
     }
   };
 
+  const handleUploadFrames = async (slotKey: string, files: File[]) => {
+    setBusySlot(slotKey);
+    try {
+      const formData = new FormData();
+      formData.append("slotKey", slotKey);
+      formData.append("mode", "frames");
+      for (const file of files) {
+        formData.append("files", file);
+      }
+
+      const res = await fetch("/api/media", {
+        method: "POST",
+        body: formData,
+      });
+      const data = (await res.json()) as {
+        manifest?: MediaManifest;
+        error?: string;
+      };
+
+      if (!res.ok) {
+        throw new Error(data.error ?? "อัปโหลดชุดภาพ 360° ไม่สำเร็จ");
+      }
+      if (data.manifest) {
+        setManifest(data.manifest);
+      }
+      showToast(
+        "success",
+        `อัปโหลดชุดภาพ 360° (${files.length} เฟรม) เรียบร้อยแล้ว`
+      );
+    } catch (err) {
+      showToast(
+        "error",
+        err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการอัปโหลด 360°"
+      );
+    } finally {
+      setBusySlot(null);
+    }
+  };
+
   const handleDelete = async (slotKey: string) => {
     setBusySlot(slotKey);
     try {
@@ -275,12 +358,45 @@ export function MediaManagerClient({
     }
   };
 
+  const handleSaveYouTube = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusySlot("hero_youtube");
+    try {
+      const res = await fetch("/api/media", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slotKey: "hero_youtube",
+          youtubeUrl: youtubeInput,
+        }),
+      });
+      const data = (await res.json()) as {
+        manifest?: MediaManifest;
+        error?: string;
+      };
+      if (!res.ok) {
+        throw new Error(data.error ?? "บันทึกลิงก์ YouTube ไม่สำเร็จ");
+      }
+      if (data.manifest) {
+        setManifest(data.manifest);
+      }
+      showToast("success", "บันทึกคลิป YouTube หน้าแรกเรียบร้อยแล้ว");
+    } catch (err) {
+      showToast(
+        "error",
+        err instanceof Error ? err.message : "เกิดข้อผิดพลาดในการบันทึกลิงก์ YouTube"
+      );
+    } finally {
+      setBusySlot(null);
+    }
+  };
+
   const brandSlots: SlotItem[] = [
     {
       slotKey: "hero_banner",
-      label: "แบนเนอร์หลักหน้าแรก (Hero Banner)",
-      hint: "แนะนำขนาด 1920×900 px (.webp / .jpg) แสดงเป็นพื้นหลังส่วนบนสุดของหน้าแรก",
-      accept: "image/webp,image/png,image/jpeg",
+      label: "แบนเนอร์หลักหน้าแรก (รูปภาพ หรือ วิดีโอ .mp4/.webm)",
+      hint: "รองรับรูป (.webp/.jpg/.png สูงสุด 10 MB) หรือวิดีโอ (.mp4/.webm สูงสุด 50 MB) เล่นวนอัตโนมัติแบบเต็มจอ",
+      accept: "image/webp,image/png,image/jpeg,video/mp4,video/webm",
     },
     {
       slotKey: "site_logo",
@@ -391,17 +507,92 @@ export function MediaManagerClient({
       {/* Tab Content */}
       <div className="mt-8">
         {activeTab === "brand" && (
-          <div className="grid gap-6 md:grid-cols-2">
-            {brandSlots.map((item) => (
-              <MediaSlotCard
-                key={item.slotKey}
-                item={item}
-                entry={manifest[item.slotKey]}
-                busy={busySlot === item.slotKey}
-                onUpload={handleUpload}
-                onDelete={handleDelete}
-              />
-            ))}
+          <div className="space-y-6">
+            <div className="grid gap-6 md:grid-cols-2">
+              {brandSlots.map((item) => (
+                <MediaSlotCard
+                  key={item.slotKey}
+                  item={item}
+                  entry={manifest[item.slotKey]}
+                  busy={busySlot === item.slotKey}
+                  onUpload={handleUpload}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+
+            {/* YouTube Hero Video Card */}
+            <form
+              onSubmit={handleSaveYouTube}
+              className="rounded-xl border border-neutral-200 bg-white p-5 shadow-sm"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div className="flex items-center gap-2">
+                  <Video className="h-5 w-5 text-[#d70015]" />
+                  <h3 className="font-display text-sm font-bold text-[#111317]">
+                    คลิปวิดีโอ YouTube หน้าแรก (ทางเลือกแทนการอัปโหลดไฟล์)
+                  </h3>
+                </div>
+                {manifest["hero_youtube"] ? (
+                  <span className="rounded-full bg-emerald-50 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-700">
+                    เชื่อมคลิป YouTube แล้ว
+                  </span>
+                ) : (
+                  <span className="rounded-full bg-neutral-100 px-2.5 py-0.5 text-[11px] font-medium text-neutral-500">
+                    ยังไม่ได้ตั้งค่า
+                  </span>
+                )}
+              </div>
+              <p className="mt-1 text-xs text-neutral-500">
+                วางลิงก์คลิปจากช่อง YouTube ทางการของ Isuzu Thailand (เล่นอัตโนมัติแบบไม่มีเสียงเป็นพื้นหลังหน้าแรก หากไม่ได้อัปโหลดวิดีโอ .mp4 ไว้ด้านบน)
+              </p>
+
+              <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                <input
+                  type="url"
+                  value={youtubeInput}
+                  onChange={(e) => setYoutubeInput(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="flex-1 rounded-lg border border-neutral-300 px-3.5 py-2 text-sm focus:border-[#d70015] focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={busySlot === "hero_youtube" || !youtubeInput.trim()}
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#0d0f12] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#d70015] disabled:opacity-50"
+                >
+                  {busySlot === "hero_youtube" && (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  )}
+                  บันทึกคลิป YouTube
+                </button>
+                {manifest["hero_youtube"] && (
+                  <button
+                    type="button"
+                    disabled={busySlot === "hero_youtube"}
+                    onClick={async () => {
+                      await handleDelete("hero_youtube");
+                      setYoutubeInput("");
+                    }}
+                    className="inline-flex items-center justify-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3.5 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-600 hover:text-white disabled:opacity-50"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    ลบ
+                  </button>
+                )}
+              </div>
+
+              {manifest["hero_youtube"]?.url && (
+                <div className="mt-4 aspect-[16/9] max-w-xl overflow-hidden rounded-lg border border-neutral-200 bg-[#0d0f12]">
+                  <iframe
+                    src={`${manifest["hero_youtube"].url}?mute=1`}
+                    title="YouTube Hero Video Preview"
+                    className="h-full w-full border-0"
+                    allow="autoplay; encrypted-media"
+                    allowFullScreen
+                  />
+                </div>
+              )}
+            </form>
           </div>
         )}
 
@@ -422,13 +613,23 @@ export function MediaManagerClient({
                   accept: "application/pdf",
                   isPdf: true,
                 },
-                ...model.colors.map((color) => ({
-                  slotKey: `color:${color.id}`,
-                  label: `สี: ${color.color_name}`,
-                  hint: "แสดงเมื่อลูกค้ากดสลับสีนี้ในหน้าโชว์รูม (.webp / .png พื้นใสยิ่งสวย)",
-                  accept: "image/webp,image/png,image/jpeg",
-                  swatchHex: color.hex_code,
-                })),
+                ...model.colors.flatMap((color): SlotItem[] => [
+                  {
+                    slotKey: `color:${color.id}`,
+                    label: `สี: ${color.color_name}`,
+                    hint: "รูปเดี่ยวเมื่อเลือกสีนี้ในหน้าโชว์รูม (.webp / .png พื้นใสยิ่งสวย)",
+                    accept: "image/webp,image/png,image/jpeg",
+                    swatchHex: color.hex_code,
+                  },
+                  {
+                    slotKey: `spin:${color.id}`,
+                    label: `ภาพหมุน 360°: ${color.color_name}`,
+                    hint: "เลือกหลายรูปพร้อมกัน (แนะนำ 12–36 รูปเรียงเลข 01, 02, ...) เพื่อหมุนรอบคันในหน้าโชว์รูม",
+                    accept: "image/webp,image/png,image/jpeg",
+                    isSpin360: true,
+                    swatchHex: color.hex_code,
+                  },
+                ]),
               ];
 
               return (
@@ -462,6 +663,7 @@ export function MediaManagerClient({
                         entry={manifest[item.slotKey]}
                         busy={busySlot === item.slotKey}
                         onUpload={handleUpload}
+                        onUploadFrames={handleUploadFrames}
                         onDelete={handleDelete}
                       />
                     ))}

@@ -6,6 +6,7 @@ import { Check, Calculator, FileDown, GitCompare, Shield, Sparkles, Car } from "
 import type { CarModel } from "@/types/database";
 import { formatBaht } from "@/data/mock-data";
 import type { MediaManifest } from "@/lib/media-store";
+import { Car360Viewer } from "@/components/Car360Viewer";
 
 export function ShowroomClient({
   model,
@@ -18,6 +19,10 @@ export function ShowroomClient({
   const [selectedTrim, setSelectedTrim] = useState(model.trims[0]);
 
   const totalPrice = selectedTrim.price + (selectedColor?.extra_price ?? 0);
+  const spinFrames = selectedColor
+    ? (media[`spin:${selectedColor.id}`]?.frames?.map((f) => f.url) ?? [])
+    : [];
+  const has360 = spinFrames.length >= 2;
   const activeCarImage =
     (selectedColor ? media[`color:${selectedColor.id}`]?.url : undefined) ??
     media[`model:${model.slug}`]?.url;
@@ -27,7 +32,7 @@ export function ShowroomClient({
     <div className="bg-white">
       {/* Top Showroom Stage */}
       <section className="bg-[#0d0f12] text-white">
-        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
           <div className="text-xs text-neutral-400">
             <Link href="/" className="hover:text-white">หน้าแรก</Link>
             <span className="mx-2">/</span>
@@ -39,7 +44,7 @@ export function ShowroomClient({
           <div className="mt-8 grid items-center gap-10 lg:grid-cols-12">
             {/* Visual Color Preview Stage */}
             <div className="lg:col-span-7">
-              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#181c22] to-[#0b0d10] p-8 sm:p-12">
+              <div className="relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-br from-[#181c22] to-[#0b0d10] p-6 sm:p-8">
                 <div
                   className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full opacity-25 blur-3xl transition-colors duration-500"
                   style={{ backgroundColor: selectedColor?.hex_code ?? "#d70015" }}
@@ -49,18 +54,30 @@ export function ShowroomClient({
                     <span className="rounded bg-[#d70015] px-3 py-1 text-xs font-bold tracking-wide uppercase">
                       {model.category_slug}
                     </span>
-                    <span className="text-xs text-neutral-400">
-                      พื้นที่แสดงภาพรถ 360° / ภาพตามสี
-                    </span>
+                    {has360 ? (
+                      <span className="rounded-full bg-[#d70015]/20 px-3 py-1 text-xs font-semibold text-[#ff6b7a] ring-1 ring-[#d70015]/40">
+                        หมุนดูรอบคัน 360° ({spinFrames.length} มุม)
+                      </span>
+                    ) : (
+                      <span className="text-xs text-neutral-400">
+                        พื้นที่แสดงภาพรถ 360° / ภาพตามสี
+                      </span>
+                    )}
                   </div>
 
-                  {/* Vehicle Preview (แสดงรูปจริงตามสีที่เลือก หากอัปโหลดไว้ใน /admin/media) */}
+                  {/* Vehicle Preview (แสดงภาพหมุน 360° หรือรูปจริงตามสีที่เลือก) */}
                   <div
                     key={selectedColor?.id ?? "default"}
                     className="animate-spring-pop my-6 flex flex-col items-center justify-center text-center"
                   >
-                    {activeCarImage ? (
-                      <div className="flex h-56 w-full items-center justify-center sm:h-64">
+                    {has360 ? (
+                      <Car360Viewer
+                        key={spinFrames.join("|")}
+                        frames={spinFrames}
+                        alt={`${model.name} - ${selectedColor?.color_name ?? ""}`}
+                      />
+                    ) : activeCarImage ? (
+                      <div className="flex h-64 w-full items-center justify-center sm:h-80 lg:h-[360px]">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
                           key={activeCarImage}
@@ -212,14 +229,16 @@ export function ShowroomClient({
       </section>
 
       {/* Spec Breakdown */}
-      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-[1440px] px-4 py-14 sm:px-6 lg:px-8">
         <h2 className="font-display text-2xl font-bold text-[#111317]">
           ข้อมูลจำเพาะและจุดเด่น: {selectedTrim.name}
         </h2>
 
         <div className="mt-6 grid gap-4 sm:grid-cols-3">
           <div className="rounded-xl bg-[#f4f5f7] p-5">
-            <p className="text-xs text-neutral-500">ความจุกระบอกสูบ</p>
+            <p className="text-xs text-neutral-500">
+              {model.slug === "isuzu-d-max-ev" ? "แบตเตอรี่และระยะทางวิ่ง" : "ความจุกระบอกสูบ"}
+            </p>
             <p className="mt-1 font-display text-lg font-bold">{selectedTrim.specs.engine_displacement}</p>
           </div>
           <div className="rounded-xl bg-[#f4f5f7] p-5">

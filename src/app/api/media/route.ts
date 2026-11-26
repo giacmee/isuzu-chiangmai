@@ -4,6 +4,8 @@ import {
   deleteMediaSlot,
   getMediaManifest,
   saveMediaFile,
+  saveMediaFrames,
+  saveYouTubeSlot,
 } from "@/lib/media-store";
 
 export async function GET() {
@@ -13,8 +15,42 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    const contentType = request.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      const body = (await request.json().catch(() => ({}))) as {
+        slotKey?: string;
+        youtubeUrl?: string;
+      };
+      const slotKey = String(body.slotKey ?? "").trim();
+      const youtubeUrl = String(body.youtubeUrl ?? "").trim();
+
+      const { entry, manifest } = await saveYouTubeSlot(slotKey, youtubeUrl);
+      revalidatePath("/", "layout");
+
+      return NextResponse.json({ entry, manifest });
+    }
+
     const formData = await request.formData();
     const slotKey = String(formData.get("slotKey") ?? "").trim();
+    const mode = String(formData.get("mode") ?? "");
+    const multiFiles = formData
+      .getAll("files")
+      .filter((f): f is File => f instanceof File);
+
+    if (mode === "frames" || multiFiles.length > 0) {
+      if (multiFiles.length === 0) {
+        return NextResponse.json(
+          { error: "ไม่พบไฟล์ภาพ 360° ที่อัปโหลด" },
+          { status: 400 }
+        );
+      }
+
+      const { entry, manifest } = await saveMediaFrames(slotKey, multiFiles);
+      revalidatePath("/", "layout");
+
+      return NextResponse.json({ entry, manifest });
+    }
+
     const file = formData.get("file");
 
     if (!(file instanceof File)) {

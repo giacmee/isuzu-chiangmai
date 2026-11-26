@@ -2,17 +2,24 @@ import Link from "next/link";
 import { MapPin, Phone, Clock, MessageCircle } from "lucide-react";
 import { BRANCHES } from "@/data/mock-data";
 
-export function Footer() {
+export function Footer({ logoUrl }: { logoUrl?: string }) {
+  const resolvedLogo = logoUrl ?? "/images/logo-isuzu-sala.png";
+
   return (
     <>
       <footer className="border-t border-white/10 bg-[#0d0f12] pb-24 text-neutral-300 lg:pb-12">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
             <div>
-              <div className="font-display text-2xl font-extrabold tracking-tight text-[#d70015]">
-                ISUZU
-              </div>
-              <p className="mt-1 text-sm font-semibold text-white">
+              <Link href="/" className="inline-block">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={resolvedLogo}
+                  alt="ISUZU ศาลา เชียงใหม่"
+                  className="h-12 w-auto object-contain"
+                />
+              </Link>
+              <p className="mt-3 text-sm font-semibold text-white">
                 อีซูซุศาลาเชียงใหม่ (Isuzu Sala Chiang Mai)
               </p>
               <p className="mt-3 text-xs leading-relaxed text-neutral-400">

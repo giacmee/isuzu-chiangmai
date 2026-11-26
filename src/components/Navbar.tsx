@@ -29,35 +29,22 @@ const NAV_LINKS = [
 export function Navbar({ logoUrl }: { logoUrl?: string }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const resolvedLogo = logoUrl ?? "/images/logo-isuzu-sala.png";
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0d0f12]/95 text-white backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
+          aria-label="อีซูซุศาลาเชียงใหม่ หน้าแรก"
           className="group flex shrink-0 items-center gap-2.5 whitespace-nowrap"
         >
-          {logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={logoUrl}
-              alt="ISUZU อีซูซุศาลาเชียงใหม่"
-              className="spring-transition h-8 w-auto max-w-[120px] shrink-0 object-contain duration-300 group-hover:scale-105"
-            />
-          ) : (
-            <span className="spring-transition font-display text-2xl font-extrabold tracking-tight text-[#d70015] duration-300 group-hover:scale-105">
-              ISUZU
-            </span>
-          )}
-          <span className="hidden h-5 w-px bg-white/20 sm:block" />
-          <div className="hidden flex-col leading-tight sm:flex">
-            <span className="whitespace-nowrap text-xs font-semibold tracking-wide text-white">
-              อีซูซุศาลาเชียงใหม่
-            </span>
-            <span className="hidden whitespace-nowrap text-[10px] text-neutral-400 xl:block">
-              Authorized Dealer &amp; Service
-            </span>
-          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={resolvedLogo}
+            alt="ISUZU ศาลา เชียงใหม่"
+            className="spring-transition h-10 w-auto max-w-[160px] shrink-0 object-contain duration-300 group-hover:scale-105 sm:h-11"
+          />
         </Link>
 
         {/* Desktop Nav: กรอบไฮไลต์และตัวหนังสือขยายเด้งไปพร้อมกันเป็นชิ้นเดียว */}

@@ -1,1 +1,83 @@
-{}
+{
+  "model:isuzu-d-max-ev": {
+    "slotKey": "model:isuzu-d-max-ev",
+    "url": "/api/media/files/model_isuzu-d-max-ev-1795676408803.webp",
+    "filename": "model_isuzu-d-max-ev-1795676408803.webp",
+    "originalName": "main_car.webp",
+    "mimeType": "image/webp",
+    "size": 42964,
+    "updatedAt": "2026-11-26T07:00:08.805Z"
+  },
+  "model:mu-x-rs": {
+    "slotKey": "model:mu-x-rs",
+    "url": "/api/media/files/model_mu-x-rs-1795678988422.png",
+    "filename": "model_mu-x-rs-1795678988422.png",
+    "originalName": "mu-x-2027-rs-havasu-gray-front-1024x576.png",
+    "mimeType": "image/png",
+    "size": 113560,
+    "updatedAt": "2026-11-26T07:43:08.424Z"
+  },
+  "color:col-muxrs-1": {
+    "slotKey": "color:col-muxrs-1",
+    "url": "/api/media/files/color_col-muxrs-1-1795679002599.png",
+    "filename": "color_col-muxrs-1-1795679002599.png",
+    "originalName": "mu-x-2027-rs-havasu-gray-front-1024x576.png",
+    "mimeType": "image/png",
+    "size": 113560,
+    "updatedAt": "2026-11-26T07:43:22.601Z"
+  },
+  "model:mu-x-ultimate": {
+    "slotKey": "model:mu-x-ultimate",
+    "url": "/api/media/files/model_mu-x-ultimate-1795679013603.png",
+    "filename": "model_mu-x-ultimate-1795679013603.png",
+    "originalName": "2027_mux_ultimate_4wd_dolomite_pearl_white_front_ac59e58d6a_7b1c5a526e-1024x576.png",
+    "mimeType": "image/png",
+    "size": 110785,
+    "updatedAt": "2026-11-26T07:43:33.606Z"
+  },
+  "color:col-muxult-2": {
+    "slotKey": "color:col-muxult-2",
+    "url": "/api/media/files/color_col-muxult-2-1795679030282.png",
+    "filename": "color_col-muxult-2-1795679030282.png",
+    "originalName": "2027_mux_ultimate_4wd_dolomite_pearl_white_front_ac59e58d6a_7b1c5a526e-1024x576.png",
+    "mimeType": "image/png",
+    "size": 110785,
+    "updatedAt": "2026-11-26T07:43:50.284Z"
+  },
+  "model:mu-x-elegant": {
+    "slotKey": "model:mu-x-elegant",
+    "url": "/api/media/files/model_mu-x-elegant-1795679036011.png",
+    "filename": "model_mu-x-elegant-1795679036011.png",
+    "originalName": "2027_mux_elegant_bavarian_black_mica_front_3069dc2a4f_084513dbac-1024x576.png",
+    "mimeType": "image/png",
+    "size": 97757,
+    "updatedAt": "2026-11-26T07:43:56.013Z"
+  },
+  "color:col-muxelg-3": {
+    "slotKey": "color:col-muxelg-3",
+    "url": "/api/media/files/color_col-muxelg-3-1795679046288.png",
+    "filename": "color_col-muxelg-3-1795679046288.png",
+    "originalName": "2027_mux_elegant_bavarian_black_mica_front_3069dc2a4f_084513dbac-1024x576.png",
+    "mimeType": "image/png",
+    "size": 97757,
+    "updatedAt": "2026-11-26T07:44:06.290Z"
+  },
+  "model:mu-x-active": {
+    "slotKey": "model:mu-x-active",
+    "url": "/api/media/files/model_mu-x-active-1795679165878.png",
+    "filename": "model_mu-x-active-1795679165878.png",
+    "originalName": "2027_mux_active_dolomite_pearl_white_front_573b64f512_504841986d-1024x576.png",
+    "mimeType": "image/png",
+    "size": 124817,
+    "updatedAt": "2026-11-26T07:46:05.879Z"
+  },
+  "color:col-muxact-1": {
+    "slotKey": "color:col-muxact-1",
+    "url": "/api/media/files/color_col-muxact-1-1795679171716.png",
+    "filename": "color_col-muxact-1-1795679171716.png",
+    "originalName": "2027_mux_active_dolomite_pearl_white_front_573b64f512_504841986d-1024x576.png",
+    "mimeType": "image/png",
+    "size": 124817,
+    "updatedAt": "2026-11-26T07:46:11.718Z"
+  }
+}

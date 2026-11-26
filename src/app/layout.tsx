@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <Navbar logoUrl={siteLogoUrl} />
         <main className="flex-1">{children}</main>
         <FloatingQuickBar />
-        <Footer />
+        <Footer logoUrl={siteLogoUrl} />
       </body>
     </html>
   );

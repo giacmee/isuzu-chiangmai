@@ -16,7 +16,7 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
 
   return (
     <section id="models" className="bg-white py-16 sm:py-20">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div>
             <p className="text-xs font-bold tracking-widest text-[#d70015] uppercase">
@@ -58,7 +58,7 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
 
         <div
           key={selectedCategory}
-          className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-10 grid gap-8 md:grid-cols-2 xl:grid-cols-3"
         >
           {filteredModels.map((model, idx) => {
             const modelImg =
@@ -68,66 +68,76 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
             <div
               key={model.id}
               style={{ animationDelay: `${Math.min(idx * 45, 270)}ms` }}
-              className="animate-spring-pop card-spring group flex flex-col overflow-hidden rounded-2xl border border-neutral-200 bg-white hover:border-[#d70015]/40 hover:shadow-[0_18px_36px_rgba(17,19,23,0.12)]"
+              className="animate-spring-pop card-spring group flex flex-col overflow-hidden rounded-2xl bg-[#f2f1f1] ring-1 ring-black/5 hover:ring-[#d70015]/35 hover:shadow-[0_18px_36px_rgba(17,19,23,0.10)]"
             >
-              {/* Showroom Card Header (แสดงรูปจริงเมื่ออัปโหลดผ่าน /admin/media) */}
-              <div className="relative flex h-44 flex-col justify-between overflow-hidden bg-gradient-to-br from-[#14171c] via-[#1f242c] to-[#0d0f12] p-5 text-white">
-                {modelImg && (
-                  <>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={modelImg}
-                      alt={model.name}
-                      className="spring-transition absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-108"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12]/90 via-[#0d0f12]/25 to-[#0d0f12]/40" />
-                  </>
-                )}
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="rounded bg-[#d70015] px-2.5 py-0.5 text-[11px] font-semibold">
+              {/* Studio Cyclorama Stage แบบ isuzu-tis.com */}
+              <div className="lineup-studio-bg relative flex h-56 flex-col justify-between overflow-hidden sm:h-60">
+                <div className="relative z-20 flex items-center justify-between px-5 pt-4">
+                  <span className="rounded bg-[#d70015] px-2.5 py-0.5 text-[11px] font-semibold text-white shadow-xs">
                     {model.category_slug.toUpperCase()}
                   </span>
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 rounded-full bg-white/80 px-2 py-1 shadow-xs backdrop-blur-xs">
                     {model.colors.slice(0, 4).map((c) => (
                       <span
                         key={c.id}
                         title={c.color_name}
-                        className="spring-transition h-3.5 w-3.5 rounded-full border border-white/40 transition-transform duration-300 hover:scale-125"
+                        className="spring-transition h-3.5 w-3.5 rounded-full border border-black/15 transition-transform duration-300 hover:scale-125"
                         style={{ backgroundColor: c.hex_code }}
                       />
                     ))}
                   </div>
                 </div>
-                <div className="relative z-10">
-                  <p className="text-[11px] tracking-wider text-neutral-300 uppercase">
-                    {model.trims.length} รุ่นย่อยให้เลือก
-                  </p>
-                  <p className="font-display text-lg font-bold tracking-tight text-white">
-                    {model.name}
-                  </p>
-                </div>
+
+                {modelImg ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={modelImg}
+                      alt={model.name}
+                      className="spring-transition relative z-10 h-full w-full object-contain px-4 pt-2 pb-4 drop-shadow-[0_14px_18px_rgba(0,0,0,0.22)] transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="lineup-image-fade pointer-events-none absolute inset-x-0 bottom-0 z-10 h-16" />
+                  </>
+                ) : (
+                  <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 pb-6 text-center">
+                    <p className="text-xs font-semibold tracking-wider text-[#6e6e6e] uppercase">
+                      {model.trims.length} รุ่นย่อยให้เลือก
+                    </p>
+                    <p className="mt-1 font-display text-xl font-bold tracking-tight text-[#1d1d1d]">
+                      {model.name}
+                    </p>
+                  </div>
+                )}
               </div>
 
-              <div className="flex flex-1 flex-col p-5">
-                <p className="line-clamp-2 text-sm text-neutral-600">{model.tagline}</p>
+              <div className="flex flex-1 flex-col bg-[#f2f1f1] px-5 pt-2 pb-5">
+                <div className="flex items-center justify-between gap-2">
+                  <h3 className="font-display text-lg font-bold tracking-tight text-[#1d1d1d]">
+                    {model.name}
+                  </h3>
+                  <span className="shrink-0 rounded-full bg-white px-2.5 py-0.5 text-[11px] font-medium text-[#6e6e6e]">
+                    {model.trims.length} รุ่นย่อย
+                  </span>
+                </div>
+                <p className="mt-1.5 line-clamp-2 text-sm text-[#6e6e6e]">{model.tagline}</p>
 
-                <div className="mt-4 flex items-center gap-2 text-xs text-neutral-500">
+                <div className="mt-4 flex items-center gap-2 text-xs text-[#6e6e6e]">
                   <Gauge className="h-4 w-4 text-[#d70015]" />
                   <span>{model.trims[0]?.engine}</span>
                 </div>
 
-                <div className="mt-4 border-t border-neutral-100 pt-4">
-                  <p className="text-xs text-neutral-500">ราคาเริ่มต้น</p>
-                  <p className="font-display text-2xl font-bold text-[#111317]">
+                <div className="mt-4 border-t border-black/10 pt-4">
+                  <p className="text-xs text-[#6e6e6e]">ราคาเริ่มต้น</p>
+                  <p className="font-display text-2xl font-bold text-[#1d1d1d]">
                     {formatBaht(model.starting_price)}{" "}
-                    <span className="text-sm font-normal text-neutral-500">บาท</span>
+                    <span className="text-sm font-normal text-[#6e6e6e]">บาท</span>
                   </p>
                 </div>
 
                 <div className="mt-5 flex items-center gap-2 pt-1">
                   <Link
                     href={`/models/${model.slug}`}
-                    className="btn-spring flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#111317] px-3 py-2.5 text-xs font-semibold text-white group-hover:bg-[#d70015]"
+                    className="btn-spring flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#3b3b3b] px-3 py-2.5 text-xs font-semibold text-white group-hover:bg-[#d70015]"
                   >
                     ดูรายละเอียด &amp; สีรถ
                     <ArrowRight className="spring-transition h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -135,7 +145,7 @@ export function HomeLineup({ media = {} }: { media?: MediaManifest }) {
                   <Link
                     href={`/calculator?model=${model.slug}`}
                     title="คำนวณค่างวดรุ่นนี้"
-                    className="btn-spring flex items-center justify-center rounded-lg border border-neutral-200 p-2.5 text-neutral-700 hover:border-[#d70015] hover:text-[#d70015]"
+                    className="btn-spring flex items-center justify-center rounded-lg bg-white p-2.5 text-[#1d1d1d] ring-1 ring-black/10 hover:text-[#d70015] hover:ring-[#d70015]"
                   >
                     <Calculator className="h-4 w-4" />
                   </Link>

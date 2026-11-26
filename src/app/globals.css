@@ -128,6 +128,29 @@ h1, h2, h3, h4, .font-display {
   animation: springDropDown 320ms var(--ease-spring) both;
 }
 
+/* Isuzu Official Studio Cyclorama Backdrop for Model Lineup */
+.lineup-studio-bg {
+  background-color: #f2f1f1;
+  background-image:
+    radial-gradient(
+      ellipse 80% 55% at 50% 18%,
+      rgba(255, 255, 255, 0.85) 0%,
+      rgba(255, 255, 255, 0) 65%
+    ),
+    linear-gradient(
+      180deg,
+      #ececec 0%,
+      #d4d6d9 32%,
+      #b9bcc1 56%,
+      #d8d9db 74%,
+      #f2f1f1 100%
+    );
+}
+
+.lineup-image-fade {
+  background: linear-gradient(180deg, rgba(242, 241, 241, 0) 0%, #f2f1f1 100%);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

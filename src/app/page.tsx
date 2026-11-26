@@ -17,23 +17,47 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const media = await getMediaManifest();
-  const heroBanner = media["hero_banner"]?.url;
+  const heroEntry = media["hero_banner"];
+  const heroYoutube = media["hero_youtube"];
+  const isHeroVideo = Boolean(heroEntry?.mimeType?.startsWith("video/"));
 
   return (
     <div>
       {/* Hero Section สไตล์ isuzu-tis.com */}
       <section className="relative overflow-hidden bg-[#0d0f12] text-white">
-        {heroBanner && (
+        {isHeroVideo && heroEntry?.url ? (
+          <>
+            <video
+              src={heroEntry.url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/75 to-[#0d0f12]/35" />
+          </>
+        ) : heroYoutube?.mimeType === "text/youtube" && heroYoutube.filename ? (
+          <>
+            <iframe
+              src={`https://www.youtube.com/embed/${heroYoutube.filename}?autoplay=1&mute=1&loop=1&playlist=${heroYoutube.filename}&controls=0&rel=0&playsinline=1&modestbranding=1`}
+              title="ISUZU Hero Video"
+              allow="autoplay; encrypted-media"
+              className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0 opacity-50"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/75 to-[#0d0f12]/35" />
+          </>
+        ) : heroEntry?.url ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={heroBanner}
+              src={heroEntry.url}
               alt="อีซูซุศาลาเชียงใหม่"
               className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/80 to-[#0d0f12]/40" />
           </>
-        )}
+        ) : null}
         <div
           className="pointer-events-none absolute inset-0 opacity-30"
           style={{
