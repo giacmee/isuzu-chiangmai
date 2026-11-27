@@ -88,14 +88,5 @@
     "mimeType": "image/webp",
     "size": 42964,
     "updatedAt": "2026-11-27T06:22:19.508Z"
-  },
-  "hero_youtube": {
-    "slotKey": "hero_youtube",
-    "url": "https://www.youtube.com/embed/-8xoFNOJ4k0",
-    "filename": "-8xoFNOJ4k0",
-    "originalName": "https://www.youtube.com/watch?v=-8xoFNOJ4k0",
-    "mimeType": "text/youtube",
-    "size": 0,
-    "updatedAt": "2026-11-27T06:23:48.311Z"
   }
 }
