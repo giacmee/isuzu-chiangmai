@@ -178,51 +178,48 @@ export function FloatingQuickBar() {
           handleDelayedClose();
         }
       }}
-      className="animate-spring-slide-right fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:flex md:items-center"
+      className={`animate-spring-slide-right fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:block ${
+        isOpen ? "pointer-events-auto" : "pointer-events-none"
+      }`}
     >
       {/* Soft ambient red glow behind dock when expanded */}
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute right-2 h-44 w-20 rounded-full bg-[#d70015]/35 blur-2xl transition-opacity duration-500 ${
+        className={`pointer-events-none absolute inset-y-2 right-0 w-20 rounded-l-full bg-[#d70015]/30 blur-2xl transition-opacity duration-500 ${
           isOpen ? "opacity-100" : "opacity-0"
         }`}
       />
 
-      {/* Slim Peeking Edge Tab Handle (หุบชิดขอบขวาเมื่อไม่ได้ชี้เมาส์) */}
+      {/* Slim Peeking Edge Tab Handle (ชิดขอบขวาพอดี และซ่อนเก็บเมื่อแผงกางออก) */}
       <button
         type="button"
-        onClick={() => setIsOpen((prev) => !prev)}
-        aria-label={isOpen ? "พับเมนูลัด" : "เปิดเมนูลัดบริการอีซูซุ"}
+        onClick={() => setIsOpen(true)}
+        aria-label="เปิดเมนูลัดบริการอีซูซุ"
         aria-expanded={isOpen}
-        className={`relative z-20 flex h-24 w-7 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] text-white shadow-[-6px_8px_22px_rgba(0,0,0,0.28)] ring-1 ring-white/20 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:w-8 focus:outline-none ${
+        tabIndex={isOpen ? -1 : 0}
+        className={`absolute right-0 top-1/2 z-20 flex h-24 w-6 -translate-y-1/2 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] text-white shadow-[-6px_8px_22px_rgba(0,0,0,0.28)] ring-1 ring-white/20 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:w-7 focus:outline-none ${
           isOpen
-            ? "translate-x-1 bg-gradient-to-b from-[#d70015] to-[#8c040b] shadow-[-4px_6px_16px_rgba(0,0,0,0.32)]"
-            : "translate-x-0"
+            ? "pointer-events-none translate-x-3 opacity-0"
+            : "pointer-events-auto translate-x-0 opacity-100"
         }`}
       >
         <span
           aria-hidden="true"
-          className={`h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] transition-all duration-300 ${
-            isOpen ? "scale-75 opacity-60" : "animate-pulse scale-100 opacity-100"
-          }`}
+          className="h-1.5 w-1.5 animate-pulse rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)]"
         />
-        <ChevronLeft
-          className={`h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
-            isOpen ? "rotate-180" : "rotate-0"
-          }`}
-        />
+        <ChevronLeft className="h-4 w-4" />
         <span
           aria-hidden="true"
           className="h-4 w-[2px] rounded-full bg-white/50"
         />
       </button>
 
-      {/* Expandable 3-Action Dock */}
+      {/* Expandable 3-Action Dock (กางออกชิดขอบขวาพอดี 64px ไม่มีแท็บซ้อน) */}
       <div
-        className={`relative z-10 overflow-visible transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+        className={`relative z-10 w-16 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
           isOpen
-            ? "w-16 translate-x-0 opacity-100"
-            : "pointer-events-none w-0 translate-x-full opacity-0"
+            ? "pointer-events-auto translate-x-0 opacity-100"
+            : "pointer-events-none translate-x-full opacity-0"
         }`}
       >
         <div className="flex w-16 flex-col divide-y divide-white/25 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] shadow-[0_14px_34px_rgba(0,0,0,0.4)] ring-1 ring-white/20">
