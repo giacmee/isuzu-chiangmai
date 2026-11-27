@@ -6,6 +6,7 @@ export const CarModels: CollectionConfig = {
     useAsTitle: "name",
     group: "โชว์รูมและรุ่นรถ",
     defaultColumns: ["name", "slug", "starting_price", "is_featured", "is_active"],
+    preview: (doc) => (doc?.slug ? `/models/${String(doc.slug)}` : "/"),
   },
   access: {
     read: () => true,

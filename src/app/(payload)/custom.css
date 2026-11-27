@@ -1,1 +1,97 @@
 /* Custom Payload Admin overrides (kept isolated from Tailwind v4 frontend CSS) */
+
+.isuzu-admin-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.isuzu-admin-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.isuzu-admin-btn:hover {
+  transform: translateY(-1px);
+}
+
+.isuzu-admin-btn--primary {
+  background-color: #d70015;
+  color: #ffffff;
+  border: 1px solid #d70015;
+}
+
+.isuzu-admin-btn--primary:hover {
+  background-color: #b00011;
+  border-color: #b00011;
+  color: #ffffff;
+}
+
+.isuzu-admin-btn--ghost {
+  background-color: var(--theme-elevation-100);
+  color: var(--theme-text);
+  border: 1px solid var(--theme-elevation-250);
+}
+
+.isuzu-admin-btn--ghost:hover {
+  background-color: var(--theme-elevation-150);
+  border-color: var(--theme-elevation-400);
+}
+
+.isuzu-admin-nav-group {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--theme-elevation-150);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.isuzu-admin-nav-title {
+  margin: 0 0 4px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--theme-elevation-500);
+}
+
+.isuzu-admin-nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--theme-text);
+  text-decoration: none;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.isuzu-admin-nav-link:hover {
+  background-color: var(--theme-elevation-100);
+}
+
+.isuzu-admin-nav-link--accent {
+  color: #d70015;
+  font-weight: 600;
+}
+
+.isuzu-admin-nav-link--accent:hover {
+  background-color: rgba(215, 0, 21, 0.1);
+}

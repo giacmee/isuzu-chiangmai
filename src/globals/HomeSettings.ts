@@ -3,6 +3,9 @@ import type { GlobalConfig } from "payload";
 export const HomeSettings: GlobalConfig = {
   slug: "home-settings",
   label: "ตั้งค่าแบนเนอร์หน้าแรก",
+  admin: {
+    preview: () => "/",
+  },
   access: {
     read: () => true,
     update: ({ req: { user } }) => Boolean(user),

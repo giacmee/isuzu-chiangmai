@@ -6,6 +6,7 @@ export const Articles: CollectionConfig = {
     useAsTitle: "title",
     group: "การตลาดและข่าวสาร",
     defaultColumns: ["title", "category", "published_at", "is_featured", "is_active"],
+    preview: (doc) => (doc?.slug ? `/articles/${String(doc.slug)}` : "/articles"),
   },
   access: {
     read: () => true,

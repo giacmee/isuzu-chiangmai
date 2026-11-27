@@ -28,6 +28,10 @@ export default buildConfig({
     meta: {
       titleSuffix: " — อีซูซุศาลาเชียงใหม่ CMS",
     },
+    components: {
+      actions: ["/components/payload/AdminHeaderActions#AdminHeaderActions"],
+      afterNavLinks: ["/components/payload/AdminNavLinks#AdminNavLinks"],
+    },
   },
   collections: [
     Users,
