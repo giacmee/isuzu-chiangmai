@@ -7,6 +7,10 @@ import type {
   SalesConsultant,
 } from "@/types/database";
 import { getPayloadClient } from "@/lib/payload-auth";
+import { DEFAULT_HERO_SLIDES, type HeroSlideItem } from "@/lib/home-defaults";
+
+export type { HeroSlideItem };
+export { DEFAULT_HERO_SLIDES };
 
 type AnyDoc = Record<string, unknown>;
 
@@ -311,6 +315,9 @@ export async function getSalesConsultants(): Promise<SalesConsultant[]> {
 }
 
 export interface HomeBannerSettings {
+  hero_auto_slide: boolean;
+  hero_auto_slide_interval: number;
+  hero_slides: HeroSlideItem[];
   show_hero_text: boolean;
   hero_badge: string;
   hero_title_line1: string;
@@ -321,6 +328,9 @@ export interface HomeBannerSettings {
 }
 
 export const DEFAULT_HOME_SETTINGS: HomeBannerSettings = {
+  hero_auto_slide: true,
+  hero_auto_slide_interval: 5000,
+  hero_slides: DEFAULT_HERO_SLIDES,
   show_hero_text: true,
   hero_badge: "อีซูซุศาลาเชียงใหม่ — โชว์รูมและศูนย์บริการมาตรฐานครบวงจร",
   hero_title_line1: "เหนือกว่าทุกขีดจำกัด",
@@ -340,7 +350,38 @@ export async function getHomeSettings(): Promise<HomeBannerSettings> {
 
     if (!doc) return DEFAULT_HOME_SETTINGS;
 
+    const rawInterval = Number(doc.hero_auto_slide_interval ?? 5000);
+    const clampedInterval = Number.isFinite(rawInterval)
+      ? Math.min(15000, Math.max(2000, rawInterval))
+      : 5000;
+
+    const rawSlides = Array.isArray(doc.hero_slides)
+      ? (doc.hero_slides as AnyDoc[])
+      : [];
+    const mappedSlides: HeroSlideItem[] = rawSlides
+      .map((s, idx) => ({
+        slide_key:
+          typeof s.slide_key === "string" && s.slide_key.trim() !== ""
+            ? s.slide_key.trim()
+            : `slide-${idx + 1}`,
+        title: typeof s.title === "string" ? s.title : "",
+        subtitle: typeof s.subtitle === "string" ? s.subtitle : "",
+        cta_label: typeof s.cta_label === "string" ? s.cta_label : "",
+        cta_href:
+          typeof s.cta_href === "string" && s.cta_href.trim() !== ""
+            ? s.cta_href
+            : "/#models",
+        text_theme: s.text_theme === "dark" ? ("dark" as const) : ("light" as const),
+        show_overlay_text: s.show_overlay_text !== false,
+        is_active: s.is_active !== false,
+      }))
+      .filter((s) => s.title.trim() !== "" || !s.show_overlay_text);
+
     return {
+      hero_auto_slide: doc.hero_auto_slide !== false,
+      hero_auto_slide_interval: clampedInterval,
+      hero_slides:
+        mappedSlides.length > 0 ? mappedSlides : DEFAULT_HOME_SETTINGS.hero_slides,
       show_hero_text: doc.show_hero_text !== false,
       hero_badge:
         typeof doc.hero_badge === "string"

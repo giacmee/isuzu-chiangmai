@@ -19,6 +19,7 @@ import {
   Video,
 } from "lucide-react";
 import type { MediaManifest } from "@/lib/media-store";
+import type { HeroSlideItem } from "@/lib/cms";
 import type { Article, CarModel, Promotion } from "@/types/database";
 
 type TabId = "brand" | "cars" | "promotions" | "articles";
@@ -239,12 +240,14 @@ export function MediaManagerClient({
   models,
   promotions,
   articles,
+  heroSlides = [],
   userEmail,
 }: {
   initialManifest: MediaManifest;
   models: CarModel[];
   promotions: Promotion[];
   articles: Article[];
+  heroSlides?: HeroSlideItem[];
   userEmail?: string;
 }) {
   const [manifest, setManifest] = useState<MediaManifest>(initialManifest);
@@ -399,11 +402,19 @@ export function MediaManagerClient({
     }
   };
 
+  const slideSlots: SlotItem[] = heroSlides.map((slide, idx) => ({
+    slotKey: `hero_slide:${slide.slide_key}`,
+    label: `สไลด์แบนเนอร์ที่ ${idx + 1}: ${slide.title || slide.slide_key}`,
+    hint: `Slide Key: ${slide.slide_key} • แนะนำขนาดแนวนอน 1360×640 px (.webp/.jpg/.png) หรือวิดีโอ .mp4/.webm`,
+    accept: "image/webp,image/png,image/jpeg,video/mp4,video/webm",
+  }));
+
   const brandSlots: SlotItem[] = [
+    ...slideSlots,
     {
       slotKey: "hero_banner",
-      label: "แบนเนอร์หลักหน้าแรก (รูปภาพ หรือ วิดีโอ .mp4/.webm)",
-      hint: "รองรับรูป (.webp/.jpg/.png สูงสุด 10 MB) หรือวิดีโอ (.mp4/.webm สูงสุด 50 MB) เล่นวนอัตโนมัติแบบเต็มจอ",
+      label: "แบนเนอร์หลักสำรอง (ใช้กับสไลด์ที่ 1 หากยังไม่อัปโหลดเฉพาะสไลด์)",
+      hint: "รองรับรูป (.webp/.jpg/.png สูงสุด 10 MB) หรือวิดีโอ (.mp4/.webm สูงสุด 50 MB)",
       accept: "image/webp,image/png,image/jpeg,video/mp4,video/webm",
     },
     {

@@ -11,6 +11,10 @@ import {
 } from "lucide-react";
 import { HomeLineup } from "@/components/HomeLineup";
 import {
+  HeroBannerSlider,
+  type ResolvedHeroSlide,
+} from "@/components/HeroBannerSlider";
+import {
   getCarCategories,
   getCarModels,
   getHomeSettings,
@@ -19,6 +23,13 @@ import {
 import { getMediaManifest } from "@/lib/media-store";
 
 export const dynamic = "force-dynamic";
+
+const FALLBACK_SLIDE_CARS = [
+  "model:isuzu-d-max-ev",
+  "model:mu-x-rs",
+  "model:mu-x-ultimate",
+  "model:mu-x-elegant",
+];
 
 export default async function HomePage() {
   const [categories, models, promotions, media, homeSettings] =
@@ -31,108 +42,46 @@ export default async function HomePage() {
     ]);
   const heroEntry = media["hero_banner"];
   const heroYoutube = media["hero_youtube"];
-  const isHeroVideo = Boolean(heroEntry?.mimeType?.startsWith("video/"));
+
+  const activeSlides = homeSettings.hero_slides.filter((s) => s.is_active);
+  const resolvedSlides: ResolvedHeroSlide[] = activeSlides.map((slide, idx) => {
+    const slotMedia = media[`hero_slide:${slide.slide_key}`];
+    const legacyMedia = idx === 0 && !slotMedia ? heroEntry : undefined;
+    const legacyYoutube =
+      idx === 0 && !slotMedia && !legacyMedia && heroYoutube?.mimeType === "text/youtube"
+        ? heroYoutube.filename
+        : undefined;
+    const activeMedia = slotMedia ?? legacyMedia;
+    const fallbackSlotKey = FALLBACK_SLIDE_CARS[idx % FALLBACK_SLIDE_CARS.length];
+
+    return {
+      slide_key: slide.slide_key,
+      title: slide.title,
+      subtitle: slide.subtitle,
+      cta_label: slide.cta_label,
+      cta_href: slide.cta_href,
+      text_theme: slide.text_theme,
+      show_overlay_text: homeSettings.show_hero_text && slide.show_overlay_text,
+      mediaUrl: activeMedia?.url,
+      mediaMimeType: activeMedia?.mimeType,
+      youtubeId: legacyYoutube,
+      fallbackCarImg: media[fallbackSlotKey]?.url,
+    };
+  });
 
   return (
     <div>
-      {/* Hero Section สไตล์ isuzu-tis.com */}
-      <section className="relative overflow-hidden bg-[#0d0f12] text-white">
-        {isHeroVideo && heroEntry?.url ? (
-          <>
-            <video
-              src={heroEntry.url}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-55"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/75 to-[#0d0f12]/35" />
-          </>
-        ) : heroYoutube?.mimeType === "text/youtube" && heroYoutube.filename ? (
-          <>
-            <iframe
-              src={`https://www.youtube.com/embed/${heroYoutube.filename}?autoplay=1&mute=1&loop=1&playlist=${heroYoutube.filename}&controls=0&rel=0&playsinline=1&modestbranding=1`}
-              title="ISUZU Hero Video"
-              allow="autoplay; encrypted-media"
-              className="pointer-events-none absolute left-1/2 top-1/2 h-[56.25vw] min-h-full w-[177.78vh] min-w-full -translate-x-1/2 -translate-y-1/2 border-0 opacity-50"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/75 to-[#0d0f12]/35" />
-          </>
-        ) : heroEntry?.url ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={heroEntry.url}
-              alt="อีซูซุศาลาเชียงใหม่"
-              className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-40"
-            />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#0d0f12] via-[#0d0f12]/80 to-[#0d0f12]/40" />
-          </>
-        ) : null}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-30"
-          style={{
-            background:
-              "radial-gradient(circle at 80% 25%, #d70015 0%, transparent 45%), radial-gradient(circle at 15% 85%, #374151 0%, transparent 50%)",
-          }}
-        />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-          {homeSettings.show_hero_text ? (
-            <div className="max-w-3xl">
-              {homeSettings.hero_badge.trim() !== "" && (
-                <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-xs font-semibold tracking-wide text-neutral-200">
-                  <span className="h-2 w-2 rounded-full bg-[#d70015]" />
-                  {homeSettings.hero_badge}
-                </span>
-              )}
-              {(homeSettings.hero_title_line1.trim() !== "" ||
-                homeSettings.hero_title_highlight.trim() !== "") && (
-                <h1 className="mt-6 font-display text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                  {homeSettings.hero_title_line1}
-                  {homeSettings.hero_title_highlight.trim() !== "" && (
-                    <span className="block text-[#d70015]">
-                      {homeSettings.hero_title_highlight}
-                    </span>
-                  )}
-                </h1>
-              )}
-              {homeSettings.hero_description.trim() !== "" && (
-                <p className="mt-5 max-w-2xl text-base leading-relaxed text-neutral-300 sm:text-lg">
-                  {homeSettings.hero_description}
-                </p>
-              )}
+      {/* Hero Banner Carousel สไตล์ Honda Thailand + ตั้งค่าได้จาก Payload CMS */}
+      <HeroBannerSlider
+        slides={resolvedSlides}
+        autoSlide={homeSettings.hero_auto_slide}
+        autoSlideInterval={homeSettings.hero_auto_slide_interval}
+      />
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <Link
-                  href={homeSettings.hero_primary_cta_href}
-                  className="btn-spring group inline-flex items-center gap-2 rounded-lg bg-[#d70015] px-6 py-3.5 text-sm font-semibold text-white shadow-[0_8px_22px_rgba(215,0,21,0.38)] hover:bg-[#b80012]"
-                >
-                  {homeSettings.hero_primary_cta_label}
-                  <ArrowRight className="spring-transition h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
-                <Link
-                  href="/calculator"
-                  className="btn-spring inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white hover:border-white/40 hover:bg-white/10"
-                >
-                  <Calculator className="h-4 w-4 text-[#d70015]" />
-                  คำนวณค่างวด
-                </Link>
-                <Link
-                  href="/compare"
-                  className="btn-spring inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/5 px-6 py-3.5 text-sm font-semibold text-white hover:border-white/40 hover:bg-white/10"
-                >
-                  <GitCompare className="h-4 w-4 text-neutral-300" />
-                  เปรียบเทียบรุ่นรถ
-                </Link>
-              </div>
-            </div>
-          ) : (
-            <div className="min-h-[260px] sm:min-h-[340px]" />
-          )}
-
-          {/* Quick Action Strip */}
-          <div className="mt-14 grid gap-4 border-t border-white/10 pt-8 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Quick Action Strip */}
+      <section className="bg-[#0d0f12] py-6 text-white">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Link
               href="/models/d-max-hi-lander"
               className="card-spring group flex items-center justify-between rounded-xl border border-white/10 bg-white/5 p-4 hover:border-[#d70015] hover:bg-white/8"

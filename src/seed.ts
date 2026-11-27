@@ -1,5 +1,6 @@
 import { getPayload } from "payload";
 import config from "./payload.config";
+import { DEFAULT_HERO_SLIDES } from "./lib/home-defaults";
 import {
   ARTICLES,
   BRANCHES,
@@ -256,6 +257,23 @@ async function seed() {
     } else {
       summary.articles.skipped++;
     }
+  }
+
+  // 8. HomeSettings Global (Hero Banner Slides + Auto-Play)
+  const homeSettings = (await payload.findGlobal({
+    slug: "home-settings",
+  })) as unknown as { hero_slides?: unknown[] } | null;
+
+  if (!homeSettings?.hero_slides || homeSettings.hero_slides.length === 0) {
+    await payload.updateGlobal({
+      slug: "home-settings",
+      data: {
+        hero_auto_slide: true,
+        hero_auto_slide_interval: 5000,
+        hero_slides: DEFAULT_HERO_SLIDES,
+      },
+    });
+    console.log("Seeded default hero_slides into home-settings global.");
   }
 
   console.log("Payload CMS Seed Summary:", JSON.stringify(summary, null, 2));

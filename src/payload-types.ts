@@ -727,6 +727,30 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface HomeSetting {
   id: number;
+  /**
+   * เปิดเพื่อเลื่อนสไลด์อัตโนมัติ หรือปิดเพื่อเลื่อนเฉพาะตอนกด/ปัดเหมือนหน้าเว็บ Honda
+   */
+  hero_auto_slide?: boolean | null;
+  /**
+   * เช่น 5000 = เปลี่ยนสไลด์ทุก 5 วินาที (ใช้เมื่อเปิดเลื่อนอัตโนมัติ)
+   */
+  hero_auto_slide_interval?: number | null;
+  /**
+   * อัปโหลดรูปภาพหรือวิดีโอของแต่ละสไลด์ได้ที่หน้า จัดการรูปภาพ (/media-manager) โดยอ้างอิงจากรหัสสไลด์ (Slide Key)
+   */
+  hero_slides?:
+    | {
+        slide_key: string;
+        title: string;
+        subtitle?: string | null;
+        cta_label?: string | null;
+        cta_href?: string | null;
+        text_theme?: ('light' | 'dark') | null;
+        show_overlay_text?: boolean | null;
+        is_active?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
   show_hero_text?: boolean | null;
   hero_badge?: string | null;
   hero_title_line1?: string | null;
@@ -742,6 +766,21 @@ export interface HomeSetting {
  * via the `definition` "home-settings_select".
  */
 export interface HomeSettingsSelect<T extends boolean = true> {
+  hero_auto_slide?: T;
+  hero_auto_slide_interval?: T;
+  hero_slides?:
+    | T
+    | {
+        slide_key?: T;
+        title?: T;
+        subtitle?: T;
+        cta_label?: T;
+        cta_href?: T;
+        text_theme?: T;
+        show_overlay_text?: T;
+        is_active?: T;
+        id?: T;
+      };
   show_hero_text?: T;
   hero_badge?: T;
   hero_title_line1?: T;
