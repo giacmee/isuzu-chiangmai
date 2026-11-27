@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { ChevronLeft } from "lucide-react";
 
 function SteeringWheelIcon({ className }: { className?: string }) {
   return (
@@ -134,6 +136,31 @@ const QUICK_ACTIONS = [
 
 export function FloatingQuickBar() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
+  const closeTimerRef = useRef<number | null>(null);
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current !== null) {
+      window.clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  };
+
+  const handleOpen = () => {
+    clearCloseTimer();
+    setIsOpen(true);
+  };
+
+  const handleDelayedClose = () => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      setIsOpen(false);
+    }, 180);
+  };
+
+  useEffect(() => {
+    return () => clearCloseTimer();
+  }, []);
 
   // ซ่อนในหน้า Admin และ Media Manager เพื่อไม่ให้บังการทำงาน
   if (pathname?.startsWith("/admin") || pathname?.startsWith("/media-manager")) {
@@ -143,36 +170,97 @@ export function FloatingQuickBar() {
   return (
     <aside
       aria-label="เมนูลัดบริการอีซูซุ"
-      className="animate-spring-slide-right fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:block"
+      onMouseEnter={handleOpen}
+      onMouseLeave={handleDelayedClose}
+      onFocus={handleOpen}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          handleDelayedClose();
+        }
+      }}
+      className="animate-spring-slide-right fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:flex md:items-center"
     >
-      <div className="flex flex-col divide-y divide-white/25 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] shadow-[0_12px_32px_rgba(0,0,0,0.38)] ring-1 ring-white/15">
-        {QUICK_ACTIONS.map(({ href, label, sublabel, Icon }, idx) => {
-          const roundedClass =
-            idx === 0
-              ? "rounded-tl-2xl"
-              : idx === QUICK_ACTIONS.length - 1
-                ? "rounded-bl-2xl"
-                : "";
+      {/* Soft ambient red glow behind dock when expanded */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute right-2 h-44 w-20 rounded-full bg-[#d70015]/35 blur-2xl transition-opacity duration-500 ${
+          isOpen ? "opacity-100" : "opacity-0"
+        }`}
+      />
 
-          return (
-            <Link
-              key={href}
-              href={href}
-              aria-label={label}
-              className={`spring-transition group relative flex h-16 w-16 items-center justify-center text-white transition-all duration-300 hover:bg-black/15 active:scale-95 focus:outline-none focus-visible:bg-black/20 ${roundedClass}`}
-            >
-              <Icon className="spring-transition h-9 w-9 transition-transform duration-300 group-hover:-translate-x-0.5 group-hover:scale-115 group-active:scale-90" />
+      {/* Slim Peeking Edge Tab Handle (หุบชิดขอบขวาเมื่อไม่ได้ชี้เมาส์) */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-label={isOpen ? "พับเมนูลัด" : "เปิดเมนูลัดบริการอีซูซุ"}
+        aria-expanded={isOpen}
+        className={`relative z-20 flex h-24 w-7 cursor-pointer flex-col items-center justify-center gap-1.5 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] text-white shadow-[-6px_8px_22px_rgba(0,0,0,0.28)] ring-1 ring-white/20 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:w-8 focus:outline-none ${
+          isOpen
+            ? "translate-x-1 bg-gradient-to-b from-[#d70015] to-[#8c040b] shadow-[-4px_6px_16px_rgba(0,0,0,0.32)]"
+            : "translate-x-0"
+        }`}
+      >
+        <span
+          aria-hidden="true"
+          className={`h-1.5 w-1.5 rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.9)] transition-all duration-300 ${
+            isOpen ? "scale-75 opacity-60" : "animate-pulse scale-100 opacity-100"
+          }`}
+        />
+        <ChevronLeft
+          className={`h-4 w-4 transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+            isOpen ? "rotate-180" : "rotate-0"
+          }`}
+        />
+        <span
+          aria-hidden="true"
+          className="h-4 w-[2px] rounded-full bg-white/50"
+        />
+      </button>
 
-              {/* Slide-out Label แบบเด้งนุ่มๆ เมื่อเอาเมาส์ชี้ */}
-              <span className="spring-transition pointer-events-none absolute right-[calc(100%+12px)] flex translate-x-4 scale-90 flex-col items-end whitespace-nowrap rounded-xl bg-[#0d0f12]/95 px-3.5 py-2 text-right opacity-0 shadow-xl ring-1 ring-white/15 backdrop-blur-md transition-all duration-300 group-hover:translate-x-0 group-hover:scale-100 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:scale-100 group-focus-visible:opacity-100">
-                <span className="font-display text-xs font-bold text-white">
-                  {label}
+      {/* Expandable 3-Action Dock */}
+      <div
+        className={`relative z-10 overflow-visible transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isOpen
+            ? "w-16 translate-x-0 opacity-100"
+            : "pointer-events-none w-0 translate-x-full opacity-0"
+        }`}
+      >
+        <div className="flex w-16 flex-col divide-y divide-white/25 rounded-l-2xl bg-gradient-to-b from-[#ef1c24] via-[#d70015] to-[#98050d] shadow-[0_14px_34px_rgba(0,0,0,0.4)] ring-1 ring-white/20">
+          {QUICK_ACTIONS.map(({ href, label, sublabel, Icon }, idx) => {
+            const roundedClass =
+              idx === 0
+                ? "rounded-tl-2xl"
+                : idx === QUICK_ACTIONS.length - 1
+                  ? "rounded-bl-2xl"
+                  : "";
+            const staggerDelay = isOpen ? `${50 + idx * 55}ms` : "0ms";
+
+            return (
+              <Link
+                key={href}
+                href={href}
+                aria-label={label}
+                tabIndex={isOpen ? 0 : -1}
+                style={{ transitionDelay: staggerDelay }}
+                className={`group/item relative flex h-16 w-16 items-center justify-center text-white transition-all duration-400 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-black/15 active:scale-95 focus:outline-none focus-visible:bg-black/20 ${
+                  isOpen
+                    ? "translate-x-0 scale-100 opacity-100"
+                    : "translate-x-4 scale-90 opacity-0"
+                } ${roundedClass}`}
+              >
+                <Icon className="spring-transition h-9 w-9 transition-transform duration-300 group-hover/item:-translate-x-0.5 group-hover/item:scale-115 group-active/item:scale-90" />
+
+                {/* Slide-out Label แบบเด้งนุ่มๆ เมื่อเอาเมาส์ชี้แต่ละไอคอน */}
+                <span className="spring-transition pointer-events-none absolute right-[calc(100%+14px)] flex translate-x-4 scale-90 flex-col items-end whitespace-nowrap rounded-xl bg-[#0d0f12]/95 px-3.5 py-2 text-right opacity-0 shadow-xl ring-1 ring-white/15 backdrop-blur-md transition-all duration-300 group-hover/item:translate-x-0 group-hover/item:scale-100 group-hover/item:opacity-100 group-focus-visible/item:translate-x-0 group-focus-visible/item:scale-100 group-focus-visible/item:opacity-100">
+                  <span className="font-display text-xs font-bold text-white">
+                    {label}
+                  </span>
+                  <span className="text-[10px] text-neutral-300">{sublabel}</span>
                 </span>
-                <span className="text-[10px] text-neutral-300">{sublabel}</span>
-              </span>
-            </Link>
-          );
-        })}
+              </Link>
+            );
+          })}
+        </div>
       </div>
     </aside>
   );
