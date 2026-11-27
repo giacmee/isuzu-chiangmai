@@ -1,21 +1,26 @@
 "use client";
 
 import Link from "next/link";
-import { ExternalLink, Home, Images } from "lucide-react";
+import { Home, Images, PanelRight } from "lucide-react";
 
 export function AdminNavLinks() {
+  const handleOpenPreview = () => {
+    window.dispatchEvent(
+      new CustomEvent("isuzu:open-preview", { detail: { path: "/" } })
+    );
+  };
+
   return (
     <div className="isuzu-admin-nav-group">
       <p className="isuzu-admin-nav-title">ทางลัดเว็บไซต์</p>
-      <a
-        href="/"
-        target="_blank"
-        rel="noreferrer"
+      <button
+        type="button"
+        onClick={handleOpenPreview}
         className="isuzu-admin-nav-link isuzu-admin-nav-link--accent"
       >
-        <ExternalLink size={15} />
-        <span>ดูพรีวิวเว็บไซต์ (แท็บใหม่)</span>
-      </a>
+        <PanelRight size={15} />
+        <span>ดูพรีวิวเว็บไซต์ (แท็บด้านข้าง)</span>
+      </button>
       <Link href="/" className="isuzu-admin-nav-link">
         <Home size={15} />
         <span>กลับหน้าหลักเว็บไซต์</span>
