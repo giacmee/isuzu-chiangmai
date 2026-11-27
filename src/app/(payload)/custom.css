@@ -1,20 +1,53 @@
 /* Custom Payload Admin overrides (kept isolated from Tailwind v4 frontend CSS) */
 
+/* Fix Payload AppHeader actions overlapping account avatar */
+.app-header__controls-wrapper {
+  gap: 12px;
+}
+
+.app-header__step-nav-wrapper {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.app-header__actions-wrapper {
+  flex-shrink: 0;
+  margin-right: 4px;
+}
+
+.app-header__actions {
+  max-width: none;
+  margin-right: 0;
+  overflow: visible;
+}
+
+.app-header__account {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
 .isuzu-admin-actions {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  flex-wrap: nowrap;
 }
 
 .isuzu-admin-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
+  height: 32px;
+  box-sizing: border-box;
+  padding: 6px 10px;
   border-radius: 6px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12.5px;
   font-weight: 600;
   line-height: 1.2;
   text-decoration: none;
@@ -23,11 +56,18 @@
   transition:
     background-color 160ms ease,
     border-color 160ms ease,
+    color 160ms ease,
     transform 160ms ease;
 }
 
 .isuzu-admin-btn:hover {
   transform: translateY(-1px);
+}
+
+.isuzu-admin-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .isuzu-admin-btn--primary {
@@ -51,6 +91,38 @@
 .isuzu-admin-btn--ghost:hover {
   background-color: var(--theme-elevation-150);
   border-color: var(--theme-elevation-400);
+}
+
+.isuzu-admin-btn--logout {
+  background-color: transparent;
+  color: var(--theme-elevation-750);
+  border: 1px solid var(--theme-elevation-250);
+}
+
+.isuzu-admin-btn--logout:hover {
+  background-color: rgba(215, 0, 21, 0.12);
+  border-color: rgba(215, 0, 21, 0.45);
+  color: #ff4d5e;
+}
+
+@media (max-width: 900px) {
+  .isuzu-admin-btn-label {
+    display: none;
+  }
+
+  .isuzu-admin-btn {
+    padding: 6px 8px;
+  }
+}
+
+@media (max-width: 1280px) {
+  html.isuzu-preview-open .isuzu-admin-btn-label {
+    display: none;
+  }
+
+  html.isuzu-preview-open .isuzu-admin-btn {
+    padding: 6px 8px;
+  }
 }
 
 .isuzu-admin-nav-group {

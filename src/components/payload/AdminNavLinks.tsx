@@ -1,13 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { Home, Images, PanelRight } from "lucide-react";
+import { useState } from "react";
+import { Home, Images, LogOut, PanelRight } from "lucide-react";
+import { logoutPayloadAdmin } from "./logout";
 
 export function AdminNavLinks() {
+  const [loggingOut, setLoggingOut] = useState(false);
+
   const handleOpenPreview = () => {
     window.dispatchEvent(
       new CustomEvent("isuzu:open-preview", { detail: { path: "/" } })
     );
+  };
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await logoutPayloadAdmin();
   };
 
   return (
@@ -29,6 +39,15 @@ export function AdminNavLinks() {
         <Images size={15} />
         <span>จัดการรูปภาพ &amp; 360°</span>
       </Link>
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={loggingOut}
+        className="isuzu-admin-nav-link isuzu-admin-nav-link--accent"
+      >
+        <LogOut size={15} />
+        <span>{loggingOut ? "กำลังออกจากระบบ..." : "ออกจากระบบ"}</span>
+      </button>
     </div>
   );
 }

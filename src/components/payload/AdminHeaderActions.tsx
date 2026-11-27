@@ -6,12 +6,14 @@ import { createPortal } from "react-dom";
 import {
   ExternalLink,
   Home,
+  LogOut,
   Monitor,
   PanelRight,
   RefreshCw,
   Smartphone,
   X,
 } from "lucide-react";
+import { logoutPayloadAdmin } from "./logout";
 
 const PREVIEW_ROUTES = [
   { value: "/", label: "หน้าแรก (/)" },
@@ -28,6 +30,13 @@ export function AdminHeaderActions() {
   const [previewPath, setPreviewPath] = useState("/");
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
+    await logoutPayloadAdmin();
+  };
 
   useEffect(() => {
     const handleOpenEvent = (event: Event) => {
@@ -155,15 +164,34 @@ export function AdminHeaderActions() {
         <button
           type="button"
           onClick={() => setOpen((prev) => !prev)}
+          title={open ? "ปิดพรีวิว" : "ดูพรีวิวเว็บ"}
           className="isuzu-admin-btn isuzu-admin-btn--primary"
         >
           <PanelRight size={14} strokeWidth={2.2} />
-          <span>{open ? "ปิดพรีวิว" : "ดูพรีวิวเว็บ"}</span>
+          <span className="isuzu-admin-btn-label">
+            {open ? "ปิดพรีวิว" : "ดูพรีวิวเว็บ"}
+          </span>
         </button>
-        <Link href="/" className="isuzu-admin-btn isuzu-admin-btn--ghost">
+        <Link
+          href="/"
+          title="กลับหน้าหลักเว็บ"
+          className="isuzu-admin-btn isuzu-admin-btn--ghost"
+        >
           <Home size={14} strokeWidth={2.2} />
-          <span>กลับหน้าหลักเว็บ</span>
+          <span className="isuzu-admin-btn-label">กลับหน้าหลักเว็บ</span>
         </Link>
+        <button
+          type="button"
+          onClick={handleLogout}
+          disabled={loggingOut}
+          title="ออกจากระบบ"
+          className="isuzu-admin-btn isuzu-admin-btn--logout"
+        >
+          <LogOut size={14} strokeWidth={2.2} />
+          <span className="isuzu-admin-btn-label">
+            {loggingOut ? "กำลังออก..." : "ออกจากระบบ"}
+          </span>
+        </button>
       </div>
       {drawer}
     </>
