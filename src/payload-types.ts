@@ -101,8 +101,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: null;
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    'home-settings': HomeSetting;
+  };
+  globalsSelect: {
+    'home-settings': HomeSettingsSelect<false> | HomeSettingsSelect<true>;
+  };
   locale: null;
   widgets: {
     collections: CollectionsWidget;
@@ -716,6 +720,38 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-settings".
+ */
+export interface HomeSetting {
+  id: number;
+  show_hero_text?: boolean | null;
+  hero_badge?: string | null;
+  hero_title_line1?: string | null;
+  hero_title_highlight?: string | null;
+  hero_description?: string | null;
+  hero_primary_cta_label?: string | null;
+  hero_primary_cta_href?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-settings_select".
+ */
+export interface HomeSettingsSelect<T extends boolean = true> {
+  show_hero_text?: T;
+  hero_badge?: T;
+  hero_title_line1?: T;
+  hero_title_highlight?: T;
+  hero_description?: T;
+  hero_primary_cta_label?: T;
+  hero_primary_cta_href?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

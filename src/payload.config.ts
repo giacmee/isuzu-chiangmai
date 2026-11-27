@@ -14,6 +14,7 @@ import { SalesConsultants } from "./collections/SalesConsultants";
 import { Articles } from "./collections/Articles";
 import { Leads } from "./collections/Leads";
 import { ServiceBookings } from "./collections/ServiceBookings";
+import { HomeSettings } from "./globals/HomeSettings";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -39,6 +40,7 @@ export default buildConfig({
     Leads,
     ServiceBookings,
   ],
+  globals: [HomeSettings],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "dev-secret-change-me",
   typescript: {

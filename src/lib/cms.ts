@@ -309,3 +309,67 @@ export async function getSalesConsultants(): Promise<SalesConsultant[]> {
     };
   });
 }
+
+export interface HomeBannerSettings {
+  show_hero_text: boolean;
+  hero_badge: string;
+  hero_title_line1: string;
+  hero_title_highlight: string;
+  hero_description: string;
+  hero_primary_cta_label: string;
+  hero_primary_cta_href: string;
+}
+
+export const DEFAULT_HOME_SETTINGS: HomeBannerSettings = {
+  show_hero_text: true,
+  hero_badge: "อีซูซุศาลาเชียงใหม่ — โชว์รูมและศูนย์บริการมาตรฐานครบวงจร",
+  hero_title_line1: "เหนือกว่าทุกขีดจำกัด",
+  hero_title_highlight: "ISUZU D-MAX & MU-X",
+  hero_description:
+    "สัมผัสประสบการณ์เลือกรุ่นรถ เปลี่ยนสี คำนวณค่างวด และเปรียบเทียบสเปคได้ทันทีออนไลน์ พร้อมข้อเสนอพิเศษและบริการหลังการขายมาตรฐานศูนย์อีซูซุสำหรับชาวเชียงใหม่",
+  hero_primary_cta_label: "สำรวจรุ่นรถทั้งหมด",
+  hero_primary_cta_href: "/#models",
+};
+
+export async function getHomeSettings(): Promise<HomeBannerSettings> {
+  try {
+    const payload = await getPayloadClient();
+    const doc = (await payload.findGlobal({
+      slug: "home-settings",
+    })) as unknown as AnyDoc | null;
+
+    if (!doc) return DEFAULT_HOME_SETTINGS;
+
+    return {
+      show_hero_text: doc.show_hero_text !== false,
+      hero_badge:
+        typeof doc.hero_badge === "string"
+          ? doc.hero_badge
+          : DEFAULT_HOME_SETTINGS.hero_badge,
+      hero_title_line1:
+        typeof doc.hero_title_line1 === "string"
+          ? doc.hero_title_line1
+          : DEFAULT_HOME_SETTINGS.hero_title_line1,
+      hero_title_highlight:
+        typeof doc.hero_title_highlight === "string"
+          ? doc.hero_title_highlight
+          : DEFAULT_HOME_SETTINGS.hero_title_highlight,
+      hero_description:
+        typeof doc.hero_description === "string"
+          ? doc.hero_description
+          : DEFAULT_HOME_SETTINGS.hero_description,
+      hero_primary_cta_label:
+        typeof doc.hero_primary_cta_label === "string" &&
+        doc.hero_primary_cta_label.trim()
+          ? doc.hero_primary_cta_label
+          : DEFAULT_HOME_SETTINGS.hero_primary_cta_label,
+      hero_primary_cta_href:
+        typeof doc.hero_primary_cta_href === "string" &&
+        doc.hero_primary_cta_href.trim()
+          ? doc.hero_primary_cta_href
+          : DEFAULT_HOME_SETTINGS.hero_primary_cta_href,
+    };
+  } catch {
+    return DEFAULT_HOME_SETTINGS;
+  }
+}
