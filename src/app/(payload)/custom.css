@@ -116,13 +116,28 @@
   }
 }
 
+:root {
+  --isuzu-preview-width: min(46vw, 680px);
+}
+
+@media (min-width: 901px) {
+  body {
+    box-sizing: border-box;
+    transition: padding-right 220ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  html.isuzu-preview-open body {
+    padding-right: var(--isuzu-preview-width);
+  }
+}
+
 .isuzu-preview-drawer {
   position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
   z-index: 9999;
-  width: min(50vw, 760px);
+  width: var(--isuzu-preview-width);
   display: flex;
   flex-direction: column;
   background-color: var(--theme-bg);

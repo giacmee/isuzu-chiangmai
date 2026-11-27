@@ -52,6 +52,13 @@ export function AdminHeaderActions() {
     };
   }, []);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle("isuzu-preview-open", open);
+    return () => {
+      document.documentElement.classList.remove("isuzu-preview-open");
+    };
+  }, [open]);
+
   const drawer =
     open && typeof document !== "undefined"
       ? createPortal(
